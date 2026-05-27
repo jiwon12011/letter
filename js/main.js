@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     to:'', body:'', from:'',
     envelopeColor:'#741518', paperColor:'#FFF8E7', inkColor:'#2C1810',
     paper:'none', seal:'tape-pink', font:'Nanum Pen Script',
-    texture:'smooth', letterBorder:'none', motion:'slideUp',
+    texture:'smooth', letterBorder:'none', motion:'slideUp', align:'left',
     stickers:[], letterStickers:[], photos:[], letterPhotos:[]
   };
   let curTab='love', decoTarget='envelope';
@@ -64,17 +64,21 @@ document.addEventListener('DOMContentLoaded', () => {
     if(id==='pageDecorate'){ renderStickerTab(curTab); refreshDecoCanvases(); }
   }
 
+  function toUrlSafeB64(str){ return btoa(str).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
+  function fromUrlSafeB64(str){ str=str.replace(/-/g,'+').replace(/_/g,'/'); while(str.length%4) str+='='; return atob(str); }
+
   function init(){
     const h=location.hash;
     if(h.startsWith('#letter=')){
       try{
-        const bin=atob(h.slice(8));
+        const raw=decodeURIComponent(h.slice(8)).trim();
+        const bin=fromUrlSafeB64(raw);
         const bytes=Uint8Array.from(bin,c=>c.charCodeAt(0));
         const data=JSON.parse(new TextDecoder().decode(bytes));
         Object.assign(D,data);
         ['stickers','letterStickers','photos','letterPhotos'].forEach(k=>{ if(!D[k]) D[k]=[]; });
         showPage('pageReceive'); renderReceive(); return;
-      }catch(e){}
+      }catch(e){ console.error('링크 파싱 실패',e); }
     }
     showPage('pageLanding'); renderSealPicker(); renderStickerTab('love');
   }
@@ -126,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
   pick('envTextures','texture',t=>{ D.texture=t; syncDecoPreview(); });
   pick('letterBorders','border',b=>{ D.letterBorder=b; refreshLetterPreview(); });
   pick('motionPicker','motion',m=>{ D.motion=m; });
+  pick('alignPicker','align',a=>{ D.align=a; refreshLetterPreview(); });
 
   // 모션 미리보기: 봉투 탭으로 전환 → 플랩 애니메이션 재생 → 리셋
   $('btnMotionPreview').onclick=function(){
@@ -254,6 +259,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.style.background=D.paperColor;
     el.style.fontFamily="'"+D.font+"',cursive";
     el.style.color=D.inkColor;
+    el.style.textAlign=D.align||'left';
     const v=PAT[D.paper]||PAT.none;
     el.style.backgroundImage=v[0]; el.style.backgroundSize=v[1];
     el.className='deco-letter'+(D.letterBorder!=='none'?' border-'+D.letterBorder:'');
@@ -413,7 +419,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.innerHTML=
       '<div class="env-inner"></div>'+
       '<div class="env-letter'+borderCls+'" style="background:'+D.paperColor+';'+patCSS(D.paper)+'position:relative">'+
-        '<div class="env-letter-content" style="font-family:\''+D.font+'\',cursive;color:'+D.inkColor+'">'+
+        '<div class="env-letter-content" style="font-family:\''+D.font+'\',cursive;color:'+D.inkColor+';text-align:'+(D.align||'left')+'">'+
           '<p class="env-letter-greeting" style="color:'+D.inkColor+'">'+esc(D.to)+'에게</p>'+
           '<p class="env-letter-body">'+esc(D.body)+'</p>'+
           '<p class="env-letter-closing" style="color:'+D.inkColor+'">'+esc(D.from)+' 올림</p>'+
@@ -450,16 +456,26 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSendPreview(){ const w=$('sendPreview'); w.innerHTML=''; w.appendChild(buildEnvelope(true)); }
 
   $('btnCopyLink').onclick=()=>{
-    const clean=Object.assign({},D,{stickers:(D.stickers||[]).filter(Boolean),letterStickers:(D.letterStickers||[]).filter(Boolean),photos:(D.photos||[]).filter(Boolean),letterPhotos:(D.letterPhotos||[]).filter(Boolean)});
+    const clean=Object.assign({},D,{
+      stickers:(D.stickers||[]).filter(Boolean),
+      letterStickers:(D.letterStickers||[]).filter(Boolean),
+      photos:[], letterPhotos:[]
+    });
     const bytes=new TextEncoder().encode(JSON.stringify(clean));
     let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b));
-    const url=location.origin+location.pathname+'#letter='+btoa(bin);
-    navigator.clipboard.writeText(url).then(toast).catch(()=>{
+    const url=location.origin+location.pathname+'#letter='+toUrlSafeB64(bin);
+
+    const hasPhotos=(D.photos||[]).filter(Boolean).length+(D.letterPhotos||[]).filter(Boolean).length;
+
+    navigator.clipboard.writeText(url).then(()=>{
+      toast(hasPhotos?'링크 복사 완료! (사진은 링크에 포함되지 않습니다)':'링크가 복사되었습니다!');
+    }).catch(()=>{
       const t=document.createElement('textarea'); t.value=url;
-      document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove(); toast();
+      document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+      toast(hasPhotos?'링크 복사 완료! (사진은 링크에 포함되지 않습니다)':'링크가 복사되었습니다!');
     });
   };
-  function toast(){ const t=$('toast'); t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2500); }
+  function toast(msg){ const t=$('toast'); if(msg) t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
   function renderReceive(){
     applyColor(D.envelopeColor);
