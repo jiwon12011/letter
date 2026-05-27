@@ -82,18 +82,30 @@
       </div>
 
       <div class="decorate-layout">
-        <!-- 왼쪽: 봉투 캔버스 -->
+        <!-- 왼쪽: 캔버스 (봉투/편지지 전환) -->
         <div class="decorate-canvas-wrap">
-          <div class="decorate-canvas" id="decorateCanvas">
+          <div class="deco-tab-bar">
+            <button class="deco-tab active" data-target="envelope">봉투 꾸미기</button>
+            <button class="deco-tab" data-target="letter">편지지 꾸미기</button>
+          </div>
+          <!-- 봉투 캔버스 -->
+          <div class="decorate-canvas" id="decoCanvasEnvelope">
             <div class="deco-envelope" id="decoEnvelope">
               <div class="deco-env-body"></div>
               <div class="deco-env-flap"></div>
-              <div class="deco-env-seal" id="decoSeal">&#10084;</div>
+              <div class="deco-env-seal" id="decoSeal"></div>
               <div class="deco-env-to" id="decoTo">To.</div>
             </div>
-            <!-- 스티커들이 여기에 배치됨 -->
           </div>
-          <p class="canvas-hint">스티커를 클릭하면 봉투 위에 배치됩니다<br>배치된 스티커를 클릭하면 삭제</p>
+          <!-- 편지지 캔버스 -->
+          <div class="decorate-canvas decorate-canvas--letter" id="decoCanvasLetter" style="display:none">
+            <div class="deco-letter" id="decoLetter">
+              <p class="deco-letter-to" id="decoLetterTo"></p>
+              <p class="deco-letter-body" id="decoLetterBody"></p>
+              <p class="deco-letter-from" id="decoLetterFrom"></p>
+            </div>
+          </div>
+          <p class="canvas-hint">스티커를 클릭해서 배치 · 드래그로 이동 · 더블클릭 삭제</p>
         </div>
 
         <!-- 오른쪽: 옵션 패널 -->
