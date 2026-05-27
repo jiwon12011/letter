@@ -87,6 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('btnReplay').onclick=()=>renderSendPreview();
   $('btnToDecorate').onclick=()=>{
     D.to=$('recipientName').value.trim(); D.body=$('letterContent').value.trim(); D.from=$('senderName').value.trim();
+    letterPreviewInited=false;
     showPage('pageDecorate'); syncDecoPreview();
   };
   $('btnToPreview').onclick=()=>{ showPage('pageSend'); renderSendPreview(); };
@@ -209,6 +210,8 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   function patCSS(p){ const v=PAT[p]||PAT.none; return (v[0]?'background-image:'+v[0]+';':'')+(v[1]?'background-size:'+v[1]+';':''); }
 
+  let letterPreviewInited = false;
+
   function refreshLetterPreview(){
     const el=$('decoLetter');
     el.style.background=D.paperColor;
@@ -217,10 +220,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const v=PAT[D.paper]||PAT.none;
     el.style.backgroundImage=v[0]; el.style.backgroundSize=v[1];
     el.className='deco-letter'+(D.letterBorder!=='none'?' border-'+D.letterBorder:'');
-    $('decoLetterTo').textContent=D.to+'에게'; $('decoLetterTo').style.color=D.inkColor;
-    $('decoLetterBody').textContent=D.body;
-    $('decoLetterFrom').textContent=D.from+' 올림'; $('decoLetterFrom').style.color=D.inkColor;
+    $('decoLetterTo').style.color=D.inkColor;
+    $('decoLetterFrom').style.color=D.inkColor;
+
+    if(!letterPreviewInited){
+      $('decoLetterTo').textContent=D.to+'에게';
+      $('decoLetterBody').textContent=D.body;
+      $('decoLetterFrom').textContent=D.from+' 올림';
+      letterPreviewInited=true;
+    }
   }
+
+  function syncLetterEdits(){
+    const toText=$('decoLetterTo').textContent.replace(/에게$/,'').trim();
+    const bodyText=$('decoLetterBody').textContent.trim();
+    const fromText=$('decoLetterFrom').textContent.replace(/\s*올림$/,'').trim();
+    if(toText) D.to=toText;
+    if(bodyText) D.body=bodyText;
+    if(fromText) D.from=fromText;
+  }
+
+  $('decoLetterTo').addEventListener('blur', syncLetterEdits);
+  $('decoLetterBody').addEventListener('blur', syncLetterEdits);
+  $('decoLetterFrom').addEventListener('blur', syncLetterEdits);
 
   function refreshDecoCanvases(){
     syncDecoPreview(); refreshLetterPreview();

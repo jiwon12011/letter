@@ -92,7 +92,10 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
   box-shadow:0 2px 12px rgba(0,0,0,.1);
   color:var(--ink); font-size:18px; line-height:2;
 }
-.deco-letter-to { font-size:20px; margin-bottom:12px; color:#4a2c20; }
+.deco-letter-to { font-size:20px; margin-bottom:12px; }
+[contenteditable] { outline:none; border-radius:4px; transition:box-shadow .2s; cursor:text; }
+[contenteditable]:hover { box-shadow:0 0 0 2px rgba(0,0,0,.06); }
+[contenteditable]:focus { box-shadow:0 0 0 2px rgba(116,21,24,.2); }
 .deco-letter-body { white-space:pre-wrap; word-break:break-word; margin-bottom:12px; }
 .deco-letter-from { text-align:right; font-size:18px; color:#4a2c20; }
 
