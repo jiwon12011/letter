@@ -248,7 +248,13 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
   border-right:150px solid transparent;
   border-top:105px solid var(--env-light);
 }
-.env-flap.open { transform:translateY(-100%) scaleY(0.3); opacity:0; }
+/* 모션별 플랩 열림 */
+.env-flap.open-slideUp   { transform:translateY(-100%) scaleY(.3); opacity:0; }
+.env-flap.open-fadeOut    { opacity:0; transform:scale(.95); }
+.env-flap.open-flip       { transform:perspective(400px) rotateX(-160deg); transform-origin:top center; opacity:0; }
+.env-flap.open-split      { clip-path:polygon(0 0,0 0,50% 100%,100% 0,100% 0); opacity:0; }
+.env-flap.open-shrink     { transform:translateX(-50%) scale(0); transform-origin:center 80%; opacity:0; left:50%; }
+.env-flap.open-rotate     { transform:rotate(-90deg) scale(.4); transform-origin:top left; opacity:0; }
 
 /* 봉투 잠금 장식 공통 */
 .env-seal {

@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     to:'', body:'', from:'',
     envelopeColor:'#741518', paperColor:'#FFF8E7', inkColor:'#2C1810',
     paper:'none', seal:'tape-pink', font:'Nanum Pen Script',
-    texture:'smooth', letterBorder:'none',
+    texture:'smooth', letterBorder:'none', motion:'slideUp',
     stickers:[], letterStickers:[], photos:[], letterPhotos:[]
   };
   let curTab='love', decoTarget='envelope';
@@ -125,6 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
   pick('fontStyles','font',f=>{ D.font=f; refreshLetterPreview(); });
   pick('envTextures','texture',t=>{ D.texture=t; syncDecoPreview(); });
   pick('letterBorders','border',b=>{ D.letterBorder=b; refreshLetterPreview(); });
+  pick('motionPicker','motion',m=>{ D.motion=m; });
 
   // 잠금 장식 타입 탭
   document.querySelector('.seal-type-tabs').addEventListener('click',e=>{
@@ -397,7 +398,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if(state!=='closed') return; state='animating';
       const seal=el.querySelector('.env-seal'), flap=el.querySelector('.env-flap'), letter=el.querySelector('.env-letter');
       spawnParticles(seal); seal.classList.add('cracked');
-      setTimeout(()=>{ el.querySelector('.env-inner').classList.add('show'); flap.classList.add('open'); },600);
+      setTimeout(()=>{ el.querySelector('.env-inner').classList.add('show'); flap.classList.add('open-'+(D.motion||'slideUp')); },600);
       setTimeout(()=>letter.classList.add('rising'),1600);
       setTimeout(()=>{
         state='open'; letter.classList.remove('rising'); letter.classList.add('expanded');
