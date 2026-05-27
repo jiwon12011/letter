@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
         '</div>'+letSt+letPh+
       '</div>'+
       '<div class="env-body"></div>'+
-      '<div class="env-flap"><div class="env-flap-front"></div><div class="env-flap-back"></div></div>'+
+      '<div class="env-flap"><div class="env-flap-front"></div></div>'+
       buildSealEl(D.seal)+
       '<div class="env-to">To. '+esc(D.to)+'</div>'+envSt+envPh;
 
