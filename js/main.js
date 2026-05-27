@@ -158,32 +158,33 @@ document.addEventListener('DOMContentLoaded', () => {
   // Deco preview
   const texMap={smooth:'',linen:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px)',felt:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'.6\' fill=\'rgba(255,255,255,0.04)\'/%3E%3C/svg%3E")',leather:'repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px)',kraft:'repeating-linear-gradient(120deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 5px)',silk:'linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 40%,rgba(255,255,255,.03) 60%,transparent 100%)',canvas:'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 5px)',velvet:'radial-gradient(circle at 50% 50%,rgba(255,255,255,.06) 0%,transparent 70%)',denim:'repeating-linear-gradient(30deg,transparent,transparent 1px,rgba(255,255,255,.03) 1px,rgba(255,255,255,.03) 3px),repeating-linear-gradient(150deg,transparent,transparent 1px,rgba(0,0,0,.03) 1px,rgba(0,0,0,.03) 3px)',wood:'repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(0,0,0,.04) 8px,rgba(0,0,0,.04) 9px,transparent 9px,transparent 12px)',marble:'radial-gradient(ellipse at 20% 50%,rgba(255,255,255,.06),transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(255,255,255,.04),transparent 40%)',corduroy:'repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px)',paper:'url("data:image/svg+xml,%3Csvg width=\'8\' height=\'8\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 4h8M4 0v8\' stroke=\'rgba(255,255,255,0.03)\' stroke-width=\'.5\'/%3E%3C/svg%3E")',knit:'repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,255,255,.03) 4px,rgba(255,255,255,.03) 5px),repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,.02) 6px,rgba(0,0,0,.02) 7px)',sand:'url("data:image/svg+xml,%3Csvg width=\'5\' height=\'5\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'3\' r=\'.4\' fill=\'rgba(255,255,255,0.05)\'/%3E%3Ccircle cx=\'4\' cy=\'1\' r=\'.3\' fill=\'rgba(0,0,0,0.04)\'/%3E%3C/svg%3E")',noise:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'1\' cy=\'1\' r=\'.5\' fill=\'rgba(255,255,255,0.04)\'/%3E%3Ccircle cx=\'4\' cy=\'4\' r=\'.4\' fill=\'rgba(0,0,0,0.03)\'/%3E%3C/svg%3E")'};
 
-  function buildSealHTML(sealKey, small) {
+  function buildSealEl(sealKey) {
     const o = sealOptions[sealKey];
     if(!o || o.type==='none') return '';
-    if(o.type==='tape'){
-      const h=small?16:26, w=small?55:90;
-      return '<div class="env-seal env-seal-tape" style="background:'+o.color+';width:'+w+'px;height:'+h+'px"></div>';
-    }
-    if(o.type==='sticker'){
-      const s=small?30:48, fs=small?16:26;
-      return '<div class="env-seal env-seal-sticker" style="width:'+s+'px;height:'+s+'px;font-size:'+fs+'px">'+o.emoji+'</div>';
-    }
-    if(o.type==='label'){
-      const fs=small?8:11;
-      return '<div class="env-seal env-seal-label" style="font-size:'+fs+'px">'+o.text+'</div>';
-    }
+    if(o.type==='tape')
+      return '<div class="env-seal env-seal-tape" style="background:'+o.color+'"></div>';
+    if(o.type==='sticker')
+      return '<div class="env-seal env-seal-sticker">'+o.emoji+'</div>';
+    if(o.type==='label')
+      return '<div class="env-seal env-seal-label">'+o.text+'</div>';
     return '';
   }
 
   function renderDecoSeal(){
     const el=$('decoSeal');
-    const html=buildSealHTML(D.seal, true);
-    if(html){
-      el.innerHTML=html;
-      el.style.display='';
-    } else {
-      el.innerHTML='';
+    const o=sealOptions[D.seal];
+    el.innerHTML='';
+    el.style.cssText='position:absolute;left:50%;transform:translateX(-50%);z-index:2;';
+    if(!o||o.type==='none') return;
+    if(o.type==='tape'){
+      el.style.top='80px';
+      el.innerHTML='<div style="width:60px;height:16px;border-radius:2px;opacity:.85;background:'+o.color+';box-shadow:0 1px 2px rgba(0,0,0,.1);transform:rotate(-2deg)"></div>';
+    } else if(o.type==='sticker'){
+      el.style.top='70px';
+      el.innerHTML='<div style="width:30px;height:30px;border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;box-shadow:0 1px 4px rgba(0,0,0,.12)">'+o.emoji+'</div>';
+    } else if(o.type==='label'){
+      el.style.top='80px';
+      el.innerHTML='<div style="padding:3px 10px;background:#fff;border-radius:2px;font-size:8px;letter-spacing:1px;color:#777;box-shadow:0 1px 3px rgba(0,0,0,.1);font-family:Pretendard,sans-serif">'+o.text+'</div>';
     }
   }
 
@@ -361,7 +362,7 @@ document.addEventListener('DOMContentLoaded', () => {
       '</div>'+
       '<div class="env-body"></div>'+
       '<div class="env-flap"><div class="env-flap-front"></div><div class="env-flap-back"></div></div>'+
-      buildSealHTML(D.seal, false)+
+      buildSealEl(D.seal)+
       '<div class="env-to">To. '+esc(D.to)+'</div>'+envSt+envPh;
 
     if(interactive) wireEnvelope(el);

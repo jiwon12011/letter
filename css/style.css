@@ -263,32 +263,31 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 }
 .env-seal:hover { transform:translateX(-50%) scale(1.05); }
 
-/* 테이프 */
+/* 테이프: 플랩 꼭지점(105px) 위치에 걸침 */
 .env-seal-tape {
-  top:97px; width:90px; height:26px;
+  top:93px; width:90px; height:24px;
   border-radius:2px; opacity:.85;
   box-shadow:0 1px 3px rgba(0,0,0,.1);
   transform:translateX(-50%) rotate(-2deg);
 }
 .env-seal-tape:hover { transform:translateX(-50%) rotate(-2deg) scale(1.05); }
 
-/* 스티커 */
+/* 스티커: 플랩 꼭지점 중앙 */
 .env-seal-sticker {
-  top:78px; width:48px; height:48px;
+  top:80px; width:48px; height:48px;
   border-radius:50%; background:#fff;
   display:flex; align-items:center; justify-content:center;
   font-size:26px; line-height:1;
   box-shadow:0 2px 8px rgba(0,0,0,.15), 0 0 0 1px rgba(0,0,0,.04);
 }
 
-/* 라벨 */
+/* 라벨: 플랩 꼭지점 바로 아래 */
 .env-seal-label {
-  top:93px; padding:5px 16px;
+  top:97px; padding:5px 16px;
   background:#fff; border-radius:3px;
   font-size:11px; font-family:'Pretendard',sans-serif;
   letter-spacing:2px; color:#777; font-weight:500;
   box-shadow:0 1px 5px rgba(0,0,0,.12), 0 0 0 1px rgba(0,0,0,.04);
-  text-transform:uppercase;
 }
 .env-seal:hover { transform:translateX(-50%) scale(1.08); }
 .env-seal.cracked { animation:sealPop .5s ease-out forwards; pointer-events:none; }
