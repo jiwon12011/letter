@@ -1,20 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ===== Seal Marks (봉투색에서 자동 파생, 마크만 선택) =====
-  const sealMarks = {
-    heart:  { name:'하트', mark:'♡' },
-    star:   { name:'별',   mark:'★' },
-    flower: { name:'꽃',   mark:'❀' },
-    clover: { name:'클로버',mark:'♣' },
-    spark:  { name:'반짝', mark:'✦' },
-    diamond:{ name:'다이아',mark:'◆' },
-    sun:    { name:'태양', mark:'☀' },
-    moon:   { name:'달',   mark:'☽' },
-    anchor: { name:'닻',   mark:'⚓' },
-    crown:  { name:'왕관', mark:'♛' },
-    cross:  { name:'십자', mark:'✚' },
-    snow:   { name:'눈꽃', mark:'❋' }
+  // ===== 봉투 잠금 장식 =====
+  const sealOptions = {
+    'tape-pink':   {type:'tape', color:'rgba(245,180,190,0.7)', label:'핑크'},
+    'tape-mint':   {type:'tape', color:'rgba(170,215,195,0.7)', label:'민트'},
+    'tape-cream':  {type:'tape', color:'rgba(245,230,200,0.7)', label:'크림'},
+    'tape-brown':  {type:'tape', color:'rgba(195,170,135,0.7)', label:'크래프트'},
+    'tape-blue':   {type:'tape', color:'rgba(180,200,230,0.7)', label:'블루'},
+    'tape-lavender':{type:'tape',color:'rgba(210,190,230,0.7)', label:'라벤더'},
+    'tape-gold':   {type:'tape', color:'rgba(225,200,130,0.6)', label:'골드'},
+    'tape-white':  {type:'tape', color:'rgba(255,255,255,0.6)', label:'화이트'},
+    'sticker-heart':  {type:'sticker', emoji:'❤️', label:'하트'},
+    'sticker-kiss':   {type:'sticker', emoji:'💋', label:'키스'},
+    'sticker-star':   {type:'sticker', emoji:'⭐', label:'별'},
+    'sticker-flower': {type:'sticker', emoji:'🌸', label:'벚꽃'},
+    'sticker-bow':    {type:'sticker', emoji:'🎀', label:'리본'},
+    'sticker-letter': {type:'sticker', emoji:'💌', label:'편지'},
+    'sticker-bear':   {type:'sticker', emoji:'🧸', label:'곰돌이'},
+    'sticker-clover': {type:'sticker', emoji:'🍀', label:'클로버'},
+    'sticker-butterfly':{type:'sticker',emoji:'🦋', label:'나비'},
+    'sticker-sparkle': {type:'sticker', emoji:'✨', label:'반짝'},
+    'sticker-rose':   {type:'sticker', emoji:'🌹', label:'장미'},
+    'sticker-moon':   {type:'sticker', emoji:'🌙', label:'달'},
+    'label-love':     {type:'label', text:'LOVE', label:'LOVE'},
+    'label-foryou':   {type:'label', text:'For You', label:'For You'},
+    'label-xo':       {type:'label', text:'XO', label:'XO'},
+    'label-merci':    {type:'label', text:'Merci', label:'Merci'},
+    'label-thankyou': {type:'label', text:'Thank You', label:'Thank You'},
+    'label-sealed':   {type:'label', text:'Sealed with ♡', label:'Sealed'},
+    'none':           {type:'none', label:'없음'}
   };
+  let sealTypeTab = 'tape';
 
   const stickerData = {
     love:   ['❤️','💕','💖','💗','💝','💘','💓','💞','💋','🥰','😘','🤗','💑','💏','🫶'],
@@ -33,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const D = {
     to:'', body:'', from:'',
     envelopeColor:'#741518', paperColor:'#FFF8E7', inkColor:'#2C1810',
-    paper:'none', seal:'classic', font:'Nanum Pen Script',
+    paper:'none', seal:'tape-pink', font:'Nanum Pen Script',
     texture:'smooth', letterBorder:'none',
     stickers:[], letterStickers:[], photos:[], letterPhotos:[]
   };
@@ -109,14 +125,28 @@ document.addEventListener('DOMContentLoaded', () => {
   pick('envTextures','texture',t=>{ D.texture=t; syncDecoPreview(); });
   pick('letterBorders','border',b=>{ D.letterBorder=b; refreshLetterPreview(); });
 
+  // 잠금 장식 타입 탭
+  document.querySelector('.seal-type-tabs').addEventListener('click',e=>{
+    const tab=e.target.closest('.seal-type-tab'); if(!tab) return;
+    document.querySelectorAll('.seal-type-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    sealTypeTab=tab.dataset.stype;
+    if(sealTypeTab==='none'){ D.seal='none'; syncDecoPreview(); }
+    renderSealPicker();
+  });
+
   function renderSealPicker(){
-    const w=$('sealShapes'); w.innerHTML='';
-    Object.keys(sealMarks).forEach(key=>{
-      const d=sealMarks[key];
+    const w=$('sealPicker'); w.innerHTML='';
+    if(sealTypeTab==='none') return;
+    Object.keys(sealOptions).forEach(key=>{
+      const o=sealOptions[key];
+      if(o.type!==sealTypeTab) return;
       const btn=document.createElement('button');
-      btn.className='seal-pick-btn'+(key===D.seal?' active':'');
-      btn.textContent=d.mark;
-      btn.title=d.name;
+      btn.className='seal-pick-btn seal-pick-btn--'+o.type+(key===D.seal?' active':'');
+      if(o.type==='tape') btn.style.background=o.color;
+      else if(o.type==='sticker') btn.textContent=o.emoji;
+      else if(o.type==='label') btn.textContent=o.text;
+      btn.title=o.label;
       btn.onclick=()=>{
         w.querySelectorAll('.seal-pick-btn').forEach(b=>b.classList.remove('active'));
         btn.classList.add('active'); D.seal=key; syncDecoPreview();
@@ -128,9 +158,37 @@ document.addEventListener('DOMContentLoaded', () => {
   // Deco preview
   const texMap={smooth:'',linen:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px)',felt:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'.6\' fill=\'rgba(255,255,255,0.04)\'/%3E%3C/svg%3E")',leather:'repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px)',kraft:'repeating-linear-gradient(120deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 5px)',silk:'linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 40%,rgba(255,255,255,.03) 60%,transparent 100%)',canvas:'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 5px)',velvet:'radial-gradient(circle at 50% 50%,rgba(255,255,255,.06) 0%,transparent 70%)',denim:'repeating-linear-gradient(30deg,transparent,transparent 1px,rgba(255,255,255,.03) 1px,rgba(255,255,255,.03) 3px),repeating-linear-gradient(150deg,transparent,transparent 1px,rgba(0,0,0,.03) 1px,rgba(0,0,0,.03) 3px)',wood:'repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(0,0,0,.04) 8px,rgba(0,0,0,.04) 9px,transparent 9px,transparent 12px)',marble:'radial-gradient(ellipse at 20% 50%,rgba(255,255,255,.06),transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(255,255,255,.04),transparent 40%)',corduroy:'repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px)',paper:'url("data:image/svg+xml,%3Csvg width=\'8\' height=\'8\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 4h8M4 0v8\' stroke=\'rgba(255,255,255,0.03)\' stroke-width=\'.5\'/%3E%3C/svg%3E")',knit:'repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,255,255,.03) 4px,rgba(255,255,255,.03) 5px),repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,.02) 6px,rgba(0,0,0,.02) 7px)',sand:'url("data:image/svg+xml,%3Csvg width=\'5\' height=\'5\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'3\' r=\'.4\' fill=\'rgba(255,255,255,0.05)\'/%3E%3Ccircle cx=\'4\' cy=\'1\' r=\'.3\' fill=\'rgba(0,0,0,0.04)\'/%3E%3C/svg%3E")',noise:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'1\' cy=\'1\' r=\'.5\' fill=\'rgba(255,255,255,0.04)\'/%3E%3Ccircle cx=\'4\' cy=\'4\' r=\'.4\' fill=\'rgba(0,0,0,0.03)\'/%3E%3C/svg%3E")'};
 
+  function buildSealHTML(sealKey, small) {
+    const o = sealOptions[sealKey];
+    if(!o || o.type==='none') return '';
+    if(o.type==='tape'){
+      const h=small?16:26, w=small?55:90;
+      return '<div class="env-seal env-seal-tape" style="background:'+o.color+';width:'+w+'px;height:'+h+'px"></div>';
+    }
+    if(o.type==='sticker'){
+      const s=small?30:48, fs=small?16:26;
+      return '<div class="env-seal env-seal-sticker" style="width:'+s+'px;height:'+s+'px;font-size:'+fs+'px">'+o.emoji+'</div>';
+    }
+    if(o.type==='label'){
+      const fs=small?8:11;
+      return '<div class="env-seal env-seal-label" style="font-size:'+fs+'px">'+o.text+'</div>';
+    }
+    return '';
+  }
+
+  function renderDecoSeal(){
+    const el=$('decoSeal');
+    const html=buildSealHTML(D.seal, true);
+    if(html){
+      el.innerHTML=html;
+      el.style.display='';
+    } else {
+      el.innerHTML='';
+    }
+  }
+
   function syncDecoPreview(){
-    const sm=sealMarks[D.seal]||sealMarks.heart;
-    $('decoSeal').textContent=sm.mark;
+    renderDecoSeal();
     $('decoTo').textContent=D.to?'To. '+D.to:'To.';
     $('decoEnvelope').querySelector('.deco-env-body').style.backgroundImage=texMap[D.texture]||'';
   }
@@ -303,7 +361,7 @@ document.addEventListener('DOMContentLoaded', () => {
       '</div>'+
       '<div class="env-body"></div>'+
       '<div class="env-flap"><div class="env-flap-front"></div><div class="env-flap-back"></div></div>'+
-      '<div class="env-seal"><span class="seal-mark">'+(sealMarks[D.seal]||sealMarks.heart).mark+'</span></div>'+
+      buildSealHTML(D.seal, false)+
       '<div class="env-to">To. '+esc(D.to)+'</div>'+envSt+envPh;
 
     if(interactive) wireEnvelope(el);
