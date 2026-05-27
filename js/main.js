@@ -1,19 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-  // ===== Seal Designs — 심플 원형 =====
-  const sealDesigns = {
-    classic: { name:'클래식',  bg:'radial-gradient(circle at 35% 30%,#D44,#8B0000 60%,#4A0000)', mark:'✦' },
-    heart:   { name:'하트',    bg:'radial-gradient(circle at 35% 30%,#E25555,#9B1818 60%,#580808)', mark:'♡' },
-    gold:    { name:'골드',    bg:'radial-gradient(circle at 35% 30%,#E8B830,#9A7B0A 60%,#5C4A00)', mark:'★' },
-    rose:    { name:'로즈',    bg:'radial-gradient(circle at 35% 30%,#F06292,#C2185B 60%,#6D0A30)', mark:'❀' },
-    navy:    { name:'네이비',  bg:'radial-gradient(circle at 35% 30%,#6A8CAF,#2C4A6E 60%,#142838)', mark:'⚓' },
-    forest:  { name:'포레스트',bg:'radial-gradient(circle at 35% 30%,#5DAE61,#2E7D32 60%,#143D16)', mark:'♣' },
-    purple:  { name:'퍼플',    bg:'radial-gradient(circle at 35% 30%,#BA68C8,#7B1FA2 60%,#3A0E4D)', mark:'✧' },
-    bronze:  { name:'브론즈',  bg:'radial-gradient(circle at 35% 30%,#CD8C52,#8B5E3C 60%,#4A2E1A)', mark:'☼' },
-    charcoal:{ name:'차콜',    bg:'radial-gradient(circle at 35% 30%,#888,#444 60%,#1a1a1a)', mark:'✦' },
-    sky:     { name:'하늘',    bg:'radial-gradient(circle at 35% 30%,#64B5F6,#1976D2 60%,#0A3D6B)', mark:'☁' },
-    peach:   { name:'피치',    bg:'radial-gradient(circle at 35% 30%,#FFAB91,#D84315 60%,#7A2610)', mark:'✿' },
-    mint:    { name:'민트',    bg:'radial-gradient(circle at 35% 30%,#80CBC4,#00796B 60%,#003D35)', mark:'❋' }
+  // ===== Seal Marks (봉투색에서 자동 파생, 마크만 선택) =====
+  const sealMarks = {
+    heart:  { name:'하트', mark:'♡' },
+    star:   { name:'별',   mark:'★' },
+    flower: { name:'꽃',   mark:'❀' },
+    clover: { name:'클로버',mark:'♣' },
+    spark:  { name:'반짝', mark:'✦' },
+    diamond:{ name:'다이아',mark:'◆' },
+    sun:    { name:'태양', mark:'☀' },
+    moon:   { name:'달',   mark:'☽' },
+    anchor: { name:'닻',   mark:'⚓' },
+    crown:  { name:'왕관', mark:'♛' },
+    cross:  { name:'십자', mark:'✚' },
+    snow:   { name:'눈꽃', mark:'❋' }
   };
 
   const stickerData = {
@@ -111,11 +111,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderSealPicker(){
     const w=$('sealShapes'); w.innerHTML='';
-    Object.keys(sealDesigns).forEach(key=>{
-      const d=sealDesigns[key];
+    Object.keys(sealMarks).forEach(key=>{
+      const d=sealMarks[key];
       const btn=document.createElement('button');
       btn.className='seal-pick-btn'+(key===D.seal?' active':'');
-      btn.style.background=d.bg;
       btn.textContent=d.mark;
       btn.title=d.name;
       btn.onclick=()=>{
@@ -130,9 +129,8 @@ document.addEventListener('DOMContentLoaded', () => {
   const texMap={smooth:'',linen:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px)',felt:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'.6\' fill=\'rgba(255,255,255,0.04)\'/%3E%3C/svg%3E")',leather:'repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px)',kraft:'repeating-linear-gradient(120deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 5px)',silk:'linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 40%,rgba(255,255,255,.03) 60%,transparent 100%)',canvas:'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 5px)',velvet:'radial-gradient(circle at 50% 50%,rgba(255,255,255,.06) 0%,transparent 70%)',denim:'repeating-linear-gradient(30deg,transparent,transparent 1px,rgba(255,255,255,.03) 1px,rgba(255,255,255,.03) 3px),repeating-linear-gradient(150deg,transparent,transparent 1px,rgba(0,0,0,.03) 1px,rgba(0,0,0,.03) 3px)',wood:'repeating-linear-gradient(0deg,transparent,transparent 8px,rgba(0,0,0,.04) 8px,rgba(0,0,0,.04) 9px,transparent 9px,transparent 12px)',marble:'radial-gradient(ellipse at 20% 50%,rgba(255,255,255,.06),transparent 50%),radial-gradient(ellipse at 80% 20%,rgba(255,255,255,.04),transparent 40%)',corduroy:'repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(0,0,0,.05) 3px,rgba(0,0,0,.05) 4px)',paper:'url("data:image/svg+xml,%3Csvg width=\'8\' height=\'8\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 4h8M4 0v8\' stroke=\'rgba(255,255,255,0.03)\' stroke-width=\'.5\'/%3E%3C/svg%3E")',knit:'repeating-linear-gradient(0deg,transparent,transparent 4px,rgba(255,255,255,.03) 4px,rgba(255,255,255,.03) 5px),repeating-linear-gradient(90deg,transparent,transparent 6px,rgba(0,0,0,.02) 6px,rgba(0,0,0,.02) 7px)',sand:'url("data:image/svg+xml,%3Csvg width=\'5\' height=\'5\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'2\' cy=\'3\' r=\'.4\' fill=\'rgba(255,255,255,0.05)\'/%3E%3Ccircle cx=\'4\' cy=\'1\' r=\'.3\' fill=\'rgba(0,0,0,0.04)\'/%3E%3C/svg%3E")',noise:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'1\' cy=\'1\' r=\'.5\' fill=\'rgba(255,255,255,0.04)\'/%3E%3Ccircle cx=\'4\' cy=\'4\' r=\'.4\' fill=\'rgba(0,0,0,0.03)\'/%3E%3C/svg%3E")'};
 
   function syncDecoPreview(){
-    const ds=sealDesigns[D.seal]||sealDesigns.classic;
-    $('decoSeal').style.background=ds.bg;
-    $('decoSeal').textContent=ds.mark;
+    const sm=sealMarks[D.seal]||sealMarks.heart;
+    $('decoSeal').textContent=sm.mark;
     $('decoTo').textContent=D.to?'To. '+D.to:'To.';
     $('decoEnvelope').querySelector('.deco-env-body').style.backgroundImage=texMap[D.texture]||'';
   }
@@ -305,7 +303,7 @@ document.addEventListener('DOMContentLoaded', () => {
       '</div>'+
       '<div class="env-body"></div>'+
       '<div class="env-flap"><div class="env-flap-front"></div><div class="env-flap-back"></div></div>'+
-      '<div class="env-seal" style="background:'+(sealDesigns[D.seal]||sealDesigns.classic).bg+'"><span class="seal-mark">'+(sealDesigns[D.seal]||sealDesigns.classic).mark+'</span></div>'+
+      '<div class="env-seal"><span class="seal-mark">'+(sealMarks[D.seal]||sealMarks.heart).mark+'</span></div>'+
       '<div class="env-to">To. '+esc(D.to)+'</div>'+envSt+envPh;
 
     if(interactive) wireEnvelope(el);
@@ -354,8 +352,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function spawnParticles(origin){
     const r=origin.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;
-    const d=sealDesigns[D.seal]||sealDesigns.classic;
-    const m=d.bg.match(/#[0-9A-Fa-f]{3,6}/g); const color=m?m[1]||m[0]:'#8B0000';
+    const color=D.envelopeColor;
     for(let i=0;i<12;i++){
       const p=document.createElement('div'); p.className='wax-particle'; p.style.background=color;
       const a=(Math.PI*2*i)/12+(Math.random()-.5)*.6,dist=20+Math.random()*50;
