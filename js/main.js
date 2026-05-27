@@ -36,7 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
     envelopeColor:'#741518', paperColor:'#FFF8E7', inkColor:'#2C1810',
     paper:'none', seal:'classic', font:'Nanum Pen Script',
     texture:'smooth', letterBorder:'none',
-    stickers:[], letterStickers:[]
+    stickers:[], letterStickers:[],
+    photos:[], letterPhotos:[]  // {dataUrl, x%, y%, rot}
+
   };
   let curTab='love', decoTarget='envelope';
 
@@ -60,6 +62,8 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.assign(D,data);
         if(!D.stickers) D.stickers=[];
         if(!D.letterStickers) D.letterStickers=[];
+        if(!D.photos) D.photos=[];
+        if(!D.letterPhotos) D.letterPhotos=[];
         showPage('pageReceive'); renderReceive(); return;
       }catch(e){}
     }
@@ -81,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('btnNewLetter').onclick=()=>{
     location.hash=''; $('recipientName').value=''; $('letterContent').value=''; $('senderName').value='';
     $('charCount').textContent='0'; $('btnToDecorate').disabled=true;
-    D.stickers=[]; D.letterStickers=[]; showPage('pageLanding');
+    D.stickers=[]; D.letterStickers=[]; D.photos=[]; D.letterPhotos=[]; showPage('pageLanding');
   };
   $('btnReply').onclick=()=>{ location.hash=''; showPage('pageWrite'); };
 
@@ -140,7 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
     $('decoTo').textContent=D.to?'To. '+D.to:'To.';
     // Texture on deco envelope body
     const body=$('decoEnvelope').querySelector('.deco-env-body');
-    const texMap={smooth:'',linen:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px)',felt:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'.6\' fill=\'rgba(255,255,255,0.04)\'/%3E%3C/svg%3E")',leather:'repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px)',kraft:'repeating-linear-gradient(120deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 5px)'};
+    const texMap={smooth:'',linen:'repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px)',felt:'url("data:image/svg+xml,%3Csvg width=\'6\' height=\'6\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ccircle cx=\'3\' cy=\'3\' r=\'.6\' fill=\'rgba(255,255,255,0.04)\'/%3E%3C/svg%3E")',leather:'repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px)',kraft:'repeating-linear-gradient(120deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 5px)',silk:'linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 40%,rgba(255,255,255,.03) 60%,transparent 100%)',canvas:'repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 5px)',velvet:'radial-gradient(circle at 50% 50%,rgba(255,255,255,.06) 0%,transparent 70%)'};
     body.style.backgroundImage=texMap[D.texture]||'';
   }
 
@@ -166,6 +170,46 @@ document.addEventListener('DOMContentLoaded', () => {
     $('inkColorPicker').value=D.inkColor;
     restoreStickers($('decoCanvasEnvelope'),D.stickers);
     restoreStickers($('decoCanvasLetter'),D.letterStickers);
+    restorePhotos($('decoCanvasEnvelope'),D.photos);
+    restorePhotos($('decoCanvasLetter'),D.letterPhotos);
+  }
+
+  // ===== Photo Upload =====
+  $('photoInput').addEventListener('change',function(){
+    Array.from(this.files).forEach(file=>{
+      if(!file.type.startsWith('image/')) return;
+      const reader=new FileReader();
+      reader.onload=function(e){
+        const dataUrl=e.target.result;
+        const arr=decoTarget==='envelope'?D.photos:D.letterPhotos;
+        const canvas=decoTarget==='envelope'?$('decoCanvasEnvelope'):$('decoCanvasLetter');
+        const x=15+Math.random()*50, y=15+Math.random()*45;
+        const rot=Math.round((Math.random()-.5)*12);
+        arr.push({dataUrl,x,y,rot});
+        addPhoto(canvas,dataUrl,x,y,rot,arr.length-1,arr);
+      };
+      reader.readAsDataURL(file);
+    });
+    this.value='';
+  });
+
+  function addPhoto(canvas,dataUrl,x,y,rot,idx,arr){
+    const el=document.createElement('div');
+    el.className='placed-photo';
+    el.style.left=x+'%'; el.style.top=y+'%';
+    el.style.setProperty('--rot',rot+'deg');
+    el.dataset.idx=idx;
+    const img=document.createElement('img');
+    img.src=dataUrl;
+    el.appendChild(img);
+    el.addEventListener('dblclick',e=>{ e.stopPropagation(); arr[idx]=null; el.remove(); });
+    setupDrag(el,canvas,arr);
+    canvas.appendChild(el);
+  }
+
+  function restorePhotos(canvas,arr){
+    canvas.querySelectorAll('.placed-photo').forEach(p=>p.remove());
+    arr.forEach((p,i)=>{ if(p) addPhoto(canvas,p.dataUrl,p.x,p.y,p.rot||0,i,arr); });
   }
 
   // ===== Deco Tabs =====
@@ -233,8 +277,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const envSt=(D.stickers||[]).filter(Boolean).map(s=>
       '<span class="env-sticker" style="left:'+(s.x/100*300)+'px;top:'+(s.y/100*180)+'px">'+s.emoji+'</span>'
     ).join('');
+    const envPh=(D.photos||[]).filter(Boolean).map(p=>
+      '<div class="env-photo" style="left:'+(p.x/100*300)+'px;top:'+(p.y/100*180)+'px;transform:rotate('+(p.rot||0)+'deg)"><img src="'+p.dataUrl+'"></div>'
+    ).join('');
     const letSt=(D.letterStickers||[]).filter(Boolean).map(s=>
       '<span class="letter-sticker" style="left:'+s.x+'%;top:'+s.y+'%">'+s.emoji+'</span>'
+    ).join('');
+    const letPh=(D.letterPhotos||[]).filter(Boolean).map(p=>
+      '<div class="letter-photo" style="left:'+p.x+'%;top:'+p.y+'%;transform:rotate('+(p.rot||0)+'deg)"><img src="'+p.dataUrl+'"></div>'
     ).join('');
 
     const patCSS={none:'',lined:'background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,.06) 28px,rgba(0,0,0,.06) 29px);',dot:'background-image:radial-gradient(circle,rgba(0,0,0,.06) 1px,transparent 1px);background-size:16px 16px;',grid:'background-image:linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px);background-size:18px 18px;'};
@@ -247,12 +297,12 @@ document.addEventListener('DOMContentLoaded', () => {
           '<p class="env-letter-greeting" style="color:'+D.inkColor+'">'+esc(D.to)+'에게</p>'+
           '<p class="env-letter-body">'+esc(D.body)+'</p>'+
           '<p class="env-letter-closing" style="color:'+D.inkColor+'">'+esc(D.from)+' 올림</p>'+
-        '</div>'+letSt+
+        '</div>'+letSt+letPh+
       '</div>'+
       '<div class="env-body"></div>'+
       '<div class="env-flap"><div class="env-flap-front"></div><div class="env-flap-back"></div></div>'+
       '<div class="env-seal" style="background:'+d.bg+'"><span class="seal-ring"></span><span class="seal-mark">'+d.mark+'</span></div>'+
-      '<div class="env-to">To. '+esc(D.to)+'</div>'+envSt;
+      '<div class="env-to">To. '+esc(D.to)+'</div>'+envSt+envPh;
 
     if(interactive) wireEnvelope(el);
     return el;
@@ -280,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function renderSendPreview(){ const w=$('sendPreview'); w.innerHTML=''; w.appendChild(buildEnvelope(true)); }
 
   $('btnCopyLink').onclick=()=>{
-    const clean=Object.assign({},D,{stickers:(D.stickers||[]).filter(Boolean),letterStickers:(D.letterStickers||[]).filter(Boolean)});
+    const clean=Object.assign({},D,{stickers:(D.stickers||[]).filter(Boolean),letterStickers:(D.letterStickers||[]).filter(Boolean),photos:(D.photos||[]).filter(Boolean),letterPhotos:(D.letterPhotos||[]).filter(Boolean)});
     const bytes=new TextEncoder().encode(JSON.stringify(clean));
     let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b));
     const url=location.origin+location.pathname+'#letter='+btoa(bin);

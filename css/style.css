@@ -110,6 +110,29 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .placed-sticker.dragging { cursor:grabbing; z-index:50; transform:scale(1.25); filter:drop-shadow(0 4px 8px rgba(0,0,0,.3)); }
 @keyframes stickerPop { from{transform:scale(0)} to{transform:scale(1)} }
 
+/* 배치된 사진 */
+.placed-photo {
+  position:absolute; cursor:grab; user-select:none; z-index:4; touch-action:none;
+  background:#fff; padding:4px; border-radius:3px;
+  box-shadow:0 2px 8px rgba(0,0,0,.2), 0 0 0 1px rgba(0,0,0,.05);
+  animation:stickerPop .2s cubic-bezier(.34,1.56,.64,1);
+  transform:rotate(var(--rot,0deg));
+}
+.placed-photo img { display:block; width:80px; height:60px; object-fit:cover; border-radius:2px; }
+.placed-photo.dragging { cursor:grabbing; z-index:50; box-shadow:0 6px 20px rgba(0,0,0,.3); transform:rotate(var(--rot,0deg)) scale(1.08); }
+
+/* 편지지/봉투 위 사진 (최종 렌더) */
+.env-photo {
+  position:absolute; background:#fff; padding:3px; border-radius:2px;
+  box-shadow:0 1px 5px rgba(0,0,0,.2); pointer-events:none; z-index:6;
+}
+.env-photo img { display:block; width:70px; height:52px; object-fit:cover; border-radius:1px; }
+.letter-photo {
+  position:absolute; background:#fff; padding:3px; border-radius:2px;
+  box-shadow:0 1px 5px rgba(0,0,0,.15); pointer-events:none;
+}
+.letter-photo img { display:block; width:70px; height:52px; object-fit:cover; border-radius:1px; }
+
 /* 옵션 패널 */
 .decorate-options { flex:1; display:flex; flex-direction:column; gap:16px; overflow-y:auto; max-height:75vh; padding-right:4px; }
 .option-group h3 { font-size:13px; color:#666; margin-bottom:8px; font-weight:600; }
@@ -152,6 +175,16 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .sticker-tab:hover { border-color:#999; }
 .sticker-tab.active { background:var(--env-color); color:#fff; border-color:var(--env-color); }
 .sticker-palette { display:flex; gap:5px; flex-wrap:wrap; }
+
+/* 사진 업로드 */
+.option-desc { font-size:11px; color:#aaa; margin-bottom:8px; line-height:1.4; }
+.photo-upload-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  padding:10px 20px; border:1.5px dashed #bbb; border-radius:8px;
+  background:#faf8f5; color:#666; font-size:14px; cursor:pointer;
+  transition:all .15s; font-family:inherit;
+}
+.photo-upload-btn:hover { border-color:#888; background:#f0ede8; }
 .sticker-btn { width:40px; height:40px; border:1px solid #e0e0e0; border-radius:8px; background:#fff; font-size:21px; cursor:pointer; transition:all .15s; display:flex; align-items:center; justify-content:center; }
 .sticker-btn:hover { background:#f5f0eb; transform:scale(1.12); border-color:#bbb; }
 
@@ -304,6 +337,9 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .tex-felt .env-body { background-image:url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='3' cy='3' r='.6' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E"); }
 .tex-leather .env-body { background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px); }
 .tex-kraft .env-body { background-image:repeating-linear-gradient(120deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 5px),repeating-linear-gradient(60deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 5px); }
+.tex-silk .env-body { background-image:linear-gradient(135deg,rgba(255,255,255,.05) 0%,transparent 40%,rgba(255,255,255,.03) 60%,transparent 100%); }
+.tex-canvas .env-body { background-image:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.03) 3px,rgba(0,0,0,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 4px,rgba(0,0,0,.02) 4px,rgba(0,0,0,.02) 5px); }
+.tex-velvet .env-body { background-image:radial-gradient(circle at 50% 50%,rgba(255,255,255,.06) 0%,transparent 70%); }
 
 /* 편지 테두리 */
 .border-none { }
@@ -311,6 +347,9 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .border-double { border:3px double rgba(0,0,0,.15) !important; }
 .border-dashed { border:2px dashed rgba(0,0,0,.12) !important; }
 .border-ornate { border:3px solid rgba(0,0,0,.08) !important; outline:1px solid rgba(0,0,0,.06); outline-offset:4px; }
+.border-shadow { box-shadow:inset 0 0 20px rgba(0,0,0,.08), 0 2px 12px rgba(0,0,0,.1) !important; }
+.border-round { border-radius:16px !important; border:2px solid rgba(0,0,0,.08) !important; }
+.border-torn { border:none !important; filter:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='t'%3E%3CfeTurbulence baseFrequency='.04' numOctaves='4' seed='2'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='4'/%3E%3C/filter%3E%3C/svg%3E#t"); }
 
 /* Overlay */
 .overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:100; opacity:0; animation:fadeIn .35s ease forwards; cursor:pointer; }

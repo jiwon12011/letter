@@ -157,6 +157,9 @@
               <button class="paper-option" data-texture="felt">펠트</button>
               <button class="paper-option" data-texture="leather">가죽</button>
               <button class="paper-option" data-texture="kraft">크래프트</button>
+              <button class="paper-option" data-texture="silk">실크</button>
+              <button class="paper-option" data-texture="canvas">캔버스</button>
+              <button class="paper-option" data-texture="velvet">벨벳</button>
             </div>
           </div>
 
@@ -168,6 +171,9 @@
               <button class="paper-option" data-border="double">이중선</button>
               <button class="paper-option" data-border="dashed">점선</button>
               <button class="paper-option" data-border="ornate">장식</button>
+              <button class="paper-option" data-border="shadow">그림자</button>
+              <button class="paper-option" data-border="round">둥근</button>
+              <button class="paper-option" data-border="torn">찢어진</button>
             </div>
           </div>
 
@@ -210,9 +216,14 @@
               <button class="sticker-tab" data-tab="text">텍스트</button>
               <button class="sticker-tab" data-tab="symbol">기호</button>
             </div>
-            <div class="sticker-palette" id="stickerPalette">
-              <!-- JS에서 탭에 따라 동적 렌더링 -->
-            </div>
+            <div class="sticker-palette" id="stickerPalette"></div>
+          </div>
+
+          <div class="option-group">
+            <h3>사진 넣기</h3>
+            <p class="option-desc">사진을 업로드하면 캔버스에 이미지 박스가 생깁니다. 드래그로 이동, 더블클릭 삭제.</p>
+            <label class="photo-upload-btn" for="photoInput">📷 사진 추가</label>
+            <input type="file" id="photoInput" accept="image/*" multiple hidden>
           </div>
         </div>
       </div>
