@@ -6,199 +6,222 @@
   <title>Letter - 소중한 사람에게 마음을 전하세요</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Nanum+Myeongjo&family=Gaegu&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&family=Nanum+Myeongjo:wght@400;700&family=Gaegu&family=Hi+Melody&family=Dokdo&family=Gamja+Flower&family=Cute+Font&family=Jua&family=Single+Day&family=East+Sea+Dokdo&family=Poor+Story&family=Stylish&family=Do+Hyeon&family=Sunflower:wght@300&family=Noto+Serif+KR:wght@400&family=Gowun+Batang&family=Gowun+Dodum&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-  <div id="app">
+<div id="app">
 
-    <!-- ===== 랜딩 ===== -->
-    <section class="page page--landing" id="pageLanding">
-      <div class="landing">
-        <div class="landing-envelope">
-          <div class="mini-envelope">
-            <div class="mini-flap"></div>
-            <div class="mini-body"></div>
-            <div class="mini-seal">&#10084;</div>
-          </div>
-        </div>
-        <h1 class="landing-title">Letter</h1>
-        <p class="landing-sub">소중한 사람에게 마음을 전하세요</p>
-        <button class="btn btn--primary" id="btnStart">편지 만들기</button>
+  <!-- ===== 랜딩 ===== -->
+  <section class="page page--landing" id="pageLanding">
+    <div class="landing">
+      <div class="landing-icon">
+        <svg class="landing-envelope-svg" viewBox="0 0 120 90" width="120" height="90">
+          <rect x="5" y="25" width="110" height="60" rx="4" fill="var(--env-color)" stroke="rgba(0,0,0,0.15)" stroke-width="1"/>
+          <polygon points="5,25 60,65 115,25" fill="var(--env-light)" stroke="rgba(0,0,0,0.1)" stroke-width="0.5"/>
+          <circle cx="60" cy="52" r="11" fill="#8B0000" opacity="0.9"/>
+          <text x="60" y="57" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="12">&#10084;</text>
+        </svg>
       </div>
-    </section>
+      <h1 class="landing-title">Letter</h1>
+      <p class="landing-sub">소중한 사람에게 마음을 전하세요</p>
+      <button class="btn btn--primary" id="btnStart">편지 만들기</button>
+    </div>
+  </section>
 
-    <!-- ===== STEP 1: 편지 쓰기 ===== -->
-    <section class="page page--write" id="pageWrite">
-      <div class="step-container">
-        <div class="step-header">
-          <div class="step-indicator">
-            <span class="step-dot active"></span>
-            <span class="step-line"></span>
-            <span class="step-dot"></span>
-            <span class="step-line"></span>
-            <span class="step-dot"></span>
-          </div>
-          <h2 class="step-title">편지 쓰기</h2>
-          <p class="step-desc">마음을 담아 편지를 작성해보세요</p>
+  <!-- ===== STEP 1: 편지 쓰기 ===== -->
+  <section class="page page--write" id="pageWrite">
+    <div class="step-container">
+      <div class="step-header">
+        <div class="step-indicator">
+          <span class="step-dot active">1</span>
+          <span class="step-line"></span>
+          <span class="step-dot">2</span>
+          <span class="step-line"></span>
+          <span class="step-dot">3</span>
         </div>
-
-        <div class="write-form">
-          <div class="form-group">
-            <label for="recipientName">받는 사람</label>
-            <input type="text" id="recipientName" placeholder="이름을 입력하세요" maxlength="20">
-          </div>
-
-          <div class="form-group">
-            <label for="letterContent">편지 내용</label>
-            <textarea id="letterContent" placeholder="마음을 자유롭게 적어보세요..." maxlength="500"></textarea>
-            <span class="char-count"><span id="charCount">0</span>/500</span>
-          </div>
-
-          <div class="form-group">
-            <label for="senderName">보내는 사람</label>
-            <input type="text" id="senderName" placeholder="이름을 입력하세요" maxlength="20">
-          </div>
+        <h2 class="step-title">편지 쓰기</h2>
+        <p class="step-desc">마음을 담아 편지를 작성해보세요</p>
+      </div>
+      <div class="write-form">
+        <div class="form-group">
+          <label for="recipientName">받는 사람</label>
+          <input type="text" id="recipientName" placeholder="이름을 입력하세요" maxlength="20">
         </div>
-
-        <div class="step-nav">
-          <button class="btn btn--ghost" id="btnBackToLanding">&#8592; 처음으로</button>
-          <button class="btn btn--primary" id="btnToDecorate" disabled>다음 &#8594;</button>
+        <div class="form-group">
+          <label for="letterContent">편지 내용</label>
+          <textarea id="letterContent" placeholder="마음을 자유롭게 적어보세요..." maxlength="500"></textarea>
+          <span class="char-count"><span id="charCount">0</span>/500</span>
+        </div>
+        <div class="form-group">
+          <label for="senderName">보내는 사람</label>
+          <input type="text" id="senderName" placeholder="이름을 입력하세요" maxlength="20">
         </div>
       </div>
-    </section>
+      <div class="step-nav">
+        <button class="btn btn--ghost" id="btnBackToLanding">&#8592; 처음으로</button>
+        <button class="btn btn--primary" id="btnToDecorate" disabled>다음 &#8594;</button>
+      </div>
+    </div>
+  </section>
 
-    <!-- ===== STEP 2: 꾸미기 ===== -->
-    <section class="page page--decorate" id="pageDecorate">
-      <div class="step-container">
-        <div class="step-header">
-          <div class="step-indicator">
-            <span class="step-dot done">&#10003;</span>
-            <span class="step-line filled"></span>
-            <span class="step-dot active"></span>
-            <span class="step-line"></span>
-            <span class="step-dot"></span>
+  <!-- ===== STEP 2: 꾸미기 ===== -->
+  <section class="page page--decorate" id="pageDecorate">
+    <div class="step-container step-container--wide">
+      <div class="step-header">
+        <div class="step-indicator">
+          <span class="step-dot done">&#10003;</span>
+          <span class="step-line filled"></span>
+          <span class="step-dot active">2</span>
+          <span class="step-line"></span>
+          <span class="step-dot">3</span>
+        </div>
+        <h2 class="step-title">꾸미기</h2>
+        <p class="step-desc">봉투 안팎을 나만의 스타일로 꾸며보세요</p>
+      </div>
+
+      <div class="decorate-layout">
+        <!-- 왼쪽: 봉투 캔버스 -->
+        <div class="decorate-canvas-wrap">
+          <div class="decorate-canvas" id="decorateCanvas">
+            <div class="deco-envelope" id="decoEnvelope">
+              <div class="deco-env-body"></div>
+              <div class="deco-env-flap"></div>
+              <div class="deco-env-seal" id="decoSeal">&#10084;</div>
+              <div class="deco-env-to" id="decoTo">To.</div>
+            </div>
+            <!-- 스티커들이 여기에 배치됨 -->
           </div>
-          <h2 class="step-title">꾸미기</h2>
-          <p class="step-desc">봉투와 편지지를 나만의 스타일로</p>
+          <p class="canvas-hint">스티커를 클릭하면 봉투 위에 배치됩니다<br>배치된 스티커를 클릭하면 삭제</p>
         </div>
 
-        <div class="decorate-layout">
-          <!-- 옵션 패널 -->
-          <div class="decorate-options">
-            <div class="option-group">
-              <h3>봉투 색상</h3>
-              <div class="color-picker" id="envelopeColors">
-                <button class="color-swatch active" data-color="#741518" style="background:#741518" title="클래식 레드"></button>
-                <button class="color-swatch" data-color="#5C3317" style="background:#5C3317" title="빈티지 브라운"></button>
-                <button class="color-swatch" data-color="#1B3A5C" style="background:#1B3A5C" title="미드나잇 블루"></button>
-                <button class="color-swatch" data-color="#2D5A3D" style="background:#2D5A3D" title="포레스트 그린"></button>
-                <button class="color-swatch" data-color="#4A3060" style="background:#4A3060" title="로얄 퍼플"></button>
-                <button class="color-swatch" data-color="#1a1a1a" style="background:#1a1a1a" title="미드나잇 블랙"></button>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <h3>편지지 스타일</h3>
-              <div class="paper-picker" id="paperStyles">
-                <button class="paper-option active" data-paper="cream">크림</button>
-                <button class="paper-option" data-paper="lined">줄무늬</button>
-                <button class="paper-option" data-paper="dot">도트</button>
-                <button class="paper-option" data-paper="aged">빈티지</button>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <h3>실링 모양</h3>
-              <div class="seal-picker" id="sealShapes">
-                <button class="seal-option active" data-seal="heart">&#10084;</button>
-                <button class="seal-option" data-seal="star">&#9733;</button>
-                <button class="seal-option" data-seal="moon">&#9790;</button>
-                <button class="seal-option" data-seal="flower">&#10047;</button>
-              </div>
-            </div>
-
-            <div class="option-group">
-              <h3>글씨체</h3>
-              <div class="font-picker" id="fontStyles">
-                <button class="font-option active" data-font="Nanum Pen Script" style="font-family:'Nanum Pen Script'">손글씨</button>
-                <button class="font-option" data-font="Gaegu" style="font-family:'Gaegu'">동글동글</button>
-                <button class="font-option" data-font="Nanum Myeongjo" style="font-family:'Nanum Myeongjo'">명조체</button>
-              </div>
+        <!-- 오른쪽: 옵션 패널 -->
+        <div class="decorate-options">
+          <div class="option-group">
+            <h3>봉투 색상</h3>
+            <div class="color-picker" id="envelopeColors">
+              <button class="color-swatch active" data-color="#741518" style="background:#741518" title="클래식 레드"></button>
+              <button class="color-swatch" data-color="#5C3317" style="background:#5C3317" title="빈티지 브라운"></button>
+              <button class="color-swatch" data-color="#1B3A5C" style="background:#1B3A5C" title="미드나잇 블루"></button>
+              <button class="color-swatch" data-color="#2D5A3D" style="background:#2D5A3D" title="포레스트 그린"></button>
+              <button class="color-swatch" data-color="#4A3060" style="background:#4A3060" title="로얄 퍼플"></button>
+              <button class="color-swatch" data-color="#1a1a1a" style="background:#1a1a1a" title="미드나잇 블랙"></button>
+              <button class="color-swatch" data-color="#C2185B" style="background:#C2185B" title="로즈 핑크"></button>
+              <button class="color-swatch" data-color="#BF360C" style="background:#BF360C" title="테라코타"></button>
+              <button class="color-swatch" data-color="#004D40" style="background:#004D40" title="딥 틸"></button>
+              <button class="color-swatch" data-color="#37474F" style="background:#37474F" title="차콜 그레이"></button>
+              <button class="color-swatch" data-color="#4E342E" style="background:#4E342E" title="초콜릿"></button>
+              <button class="color-swatch" data-color="#1A237E" style="background:#1A237E" title="인디고"></button>
             </div>
           </div>
 
-          <!-- 미리보기 -->
-          <div class="decorate-preview">
-            <h3>미리보기</h3>
-            <div class="preview-box" id="previewBox">
-              <div class="preview-envelope">
-                <div class="preview-flap"></div>
-                <div class="preview-body"></div>
-                <div class="preview-seal" id="previewSeal">&#10084;</div>
-                <div class="preview-to" id="previewTo">To. </div>
-              </div>
+          <div class="option-group">
+            <h3>편지지</h3>
+            <div class="paper-picker" id="paperStyles">
+              <button class="paper-option active" data-paper="cream">크림</button>
+              <button class="paper-option" data-paper="lined">줄무늬</button>
+              <button class="paper-option" data-paper="dot">도트</button>
+              <button class="paper-option" data-paper="aged">빈티지</button>
+              <button class="paper-option" data-paper="pink">핑크</button>
+              <button class="paper-option" data-paper="blue">하늘</button>
+              <button class="paper-option" data-paper="kraft">크래프트</button>
+              <button class="paper-option" data-paper="grid">모눈</button>
+            </div>
+          </div>
+
+          <div class="option-group">
+            <h3>실링 디자인</h3>
+            <div class="seal-picker" id="sealShapes">
+              <!-- JS에서 동적으로 미니 실링 프리뷰 생성 -->
+            </div>
+          </div>
+
+          <div class="option-group">
+            <h3>글씨체</h3>
+            <div class="font-picker font-picker--grid" id="fontStyles">
+              <button class="font-option active" data-font="Nanum Pen Script" style="font-family:'Nanum Pen Script'">나눔손글씨</button>
+              <button class="font-option" data-font="Gaegu" style="font-family:'Gaegu'">개구</button>
+              <button class="font-option" data-font="Nanum Myeongjo" style="font-family:'Nanum Myeongjo'">나눔명조</button>
+              <button class="font-option" data-font="Hi Melody" style="font-family:'Hi Melody'">하이멜로디</button>
+              <button class="font-option" data-font="Dokdo" style="font-family:'Dokdo'">독도</button>
+              <button class="font-option" data-font="Gamja Flower" style="font-family:'Gamja Flower'">감자꽃</button>
+              <button class="font-option" data-font="Cute Font" style="font-family:'Cute Font'">큐트</button>
+              <button class="font-option" data-font="Jua" style="font-family:'Jua'">주아</button>
+              <button class="font-option" data-font="Single Day" style="font-family:'Single Day'">싱글데이</button>
+              <button class="font-option" data-font="East Sea Dokdo" style="font-family:'East Sea Dokdo'">동해독도</button>
+              <button class="font-option" data-font="Poor Story" style="font-family:'Poor Story'">푸어스토리</button>
+              <button class="font-option" data-font="Stylish" style="font-family:'Stylish'">스타일리쉬</button>
+              <button class="font-option" data-font="Do Hyeon" style="font-family:'Do Hyeon'">도현</button>
+              <button class="font-option" data-font="Sunflower" style="font-family:'Sunflower'">해바라기</button>
+              <button class="font-option" data-font="Gowun Batang" style="font-family:'Gowun Batang'">고운바탕</button>
+              <button class="font-option" data-font="Gowun Dodum" style="font-family:'Gowun Dodum'">고운돋움</button>
+              <button class="font-option" data-font="Noto Serif KR" style="font-family:'Noto Serif KR'">노토세리프</button>
+            </div>
+          </div>
+
+          <div class="option-group">
+            <h3>봉투 스티커</h3>
+            <div class="sticker-tabs" id="stickerTabs">
+              <button class="sticker-tab active" data-tab="love">하트</button>
+              <button class="sticker-tab" data-tab="flower">꽃/식물</button>
+              <button class="sticker-tab" data-tab="animal">동물</button>
+              <button class="sticker-tab" data-tab="sky">하늘</button>
+              <button class="sticker-tab" data-tab="food">음식</button>
+              <button class="sticker-tab" data-tab="deco">장식</button>
+              <button class="sticker-tab" data-tab="symbol">기호</button>
+            </div>
+            <div class="sticker-palette" id="stickerPalette">
+              <!-- JS에서 탭에 따라 동적 렌더링 -->
             </div>
           </div>
         </div>
-
-        <div class="step-nav">
-          <button class="btn btn--ghost" id="btnBackToWrite">&#8592; 이전</button>
-          <button class="btn btn--primary" id="btnToPreview">다음 &#8594;</button>
-        </div>
       </div>
-    </section>
 
-    <!-- ===== STEP 3: 미리보기 & 보내기 ===== -->
-    <section class="page page--send" id="pageSend">
-      <div class="step-container">
-        <div class="step-header">
-          <div class="step-indicator">
-            <span class="step-dot done">&#10003;</span>
-            <span class="step-line filled"></span>
-            <span class="step-dot done">&#10003;</span>
-            <span class="step-line filled"></span>
-            <span class="step-dot active"></span>
-          </div>
-          <h2 class="step-title">미리보기 & 보내기</h2>
-          <p class="step-desc">완성된 편지를 확인하고 보내세요</p>
-        </div>
-
-        <div class="send-preview" id="sendPreview">
-          <p class="send-hint">봉투를 클릭하면 미리보기가 시작됩니다</p>
-        </div>
-
-        <div class="send-actions">
-          <button class="btn btn--primary btn--large" id="btnCopyLink">
-            <span>&#128279;</span> 링크 복사하기
-          </button>
-          <button class="btn btn--ghost" id="btnReplay">다시 미리보기</button>
-        </div>
-
-        <div class="step-nav">
-          <button class="btn btn--ghost" id="btnBackToDecorate">&#8592; 이전</button>
-          <button class="btn btn--ghost" id="btnNewLetter">새 편지 만들기</button>
-        </div>
-
-        <!-- 복사 완료 토스트 -->
-        <div class="toast" id="toast">링크가 복사되었습니다!</div>
+      <div class="step-nav">
+        <button class="btn btn--ghost" id="btnBackToWrite">&#8592; 이전</button>
+        <button class="btn btn--primary" id="btnToPreview">다음 &#8594;</button>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- ===== 받는 사람 화면 ===== -->
-    <section class="page page--receive" id="pageReceive">
-      <div class="receive-container">
-        <p class="receive-to" id="receiveToText"></p>
-        <div class="receive-envelope-wrap" id="receiveEnvelopeWrap">
-          <!-- 동적 생성 -->
+  <!-- ===== STEP 3: 미리보기 & 보내기 ===== -->
+  <section class="page page--send" id="pageSend">
+    <div class="step-container">
+      <div class="step-header">
+        <div class="step-indicator">
+          <span class="step-dot done">&#10003;</span>
+          <span class="step-line filled"></span>
+          <span class="step-dot done">&#10003;</span>
+          <span class="step-line filled"></span>
+          <span class="step-dot active">3</span>
         </div>
-        <p class="receive-hint" id="receiveHint">봉투를 클릭해서 열어보세요</p>
-        <button class="btn btn--ghost receive-reply" id="btnReply" style="display:none">나도 편지 쓰기</button>
+        <h2 class="step-title">미리보기 & 보내기</h2>
+        <p class="step-desc">완성된 편지를 확인하고 보내세요</p>
       </div>
-    </section>
+      <div class="send-preview" id="sendPreview"></div>
+      <div class="send-actions">
+        <button class="btn btn--primary btn--large" id="btnCopyLink">&#128279; 링크 복사하기</button>
+        <button class="btn btn--ghost" id="btnReplay">다시 미리보기</button>
+      </div>
+      <div class="step-nav">
+        <button class="btn btn--ghost" id="btnBackToDecorate">&#8592; 이전</button>
+        <button class="btn btn--ghost" id="btnNewLetter">새 편지 만들기</button>
+      </div>
+      <div class="toast" id="toast">링크가 복사되었습니다!</div>
+    </div>
+  </section>
 
-  </div>
+  <!-- ===== 받는 사람 화면 ===== -->
+  <section class="page page--receive" id="pageReceive">
+    <div class="receive-container" id="receiveContainer">
+      <p class="receive-to" id="receiveToText"></p>
+      <div class="receive-scene" id="receiveScene"></div>
+      <p class="receive-hint" id="receiveHint">봉투를 클릭해서 열어보세요</p>
+      <button class="btn btn--ghost receive-reply" id="btnReply" style="display:none">나도 편지 쓰기</button>
+    </div>
+  </section>
 
-  <script src="js/main.js"></script>
+</div>
+<script src="js/main.js"></script>
 </body>
 </html>
