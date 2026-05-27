@@ -77,7 +77,15 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .deco-envelope { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:240px; height:150px; }
 .deco-env-body { position:absolute; inset:0; background:var(--env-color); border-radius:5px; box-shadow:inset 0 2px 6px rgba(0,0,0,.25), 0 4px 14px rgba(0,0,0,.15); }
 .deco-env-flap { position:absolute; top:0; left:0; width:0; height:0; border-left:120px solid transparent; border-right:120px solid transparent; border-top:88px solid var(--env-light); z-index:1; }
-.deco-env-seal { position:absolute; top:52px; left:50%; transform:translateX(-50%); z-index:2; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
+.deco-env-seal {
+  position:absolute; top:50px; left:50%; transform:translateX(-50%);
+  width:30px; height:30px; border-radius:47% 53% 49% 51% / 51% 48% 52% 49%;
+  z-index:2; display:flex; align-items:center; justify-content:center;
+  font-size:12px; color:rgba(255,255,255,.12);
+  box-shadow:0 2px 5px rgba(0,0,0,.35), inset 0 1px 2px rgba(255,255,255,.1), inset 0 -2px 3px rgba(0,0,0,.2);
+  text-shadow:0 1px 0 rgba(255,255,255,.06), 0 -1px 0 rgba(0,0,0,.2);
+}
+.deco-env-body { position:absolute; inset:0; background:var(--env-color); border-radius:5px; box-shadow:inset 0 2px 6px rgba(0,0,0,.25), 0 4px 14px rgba(0,0,0,.15); }
 .deco-env-to { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); font-family:var(--font-letter); font-size:11px; color:rgba(255,255,255,.5); z-index:2; white-space:nowrap; }
 
 /* 데코 편지지 미리보기 */
@@ -122,15 +130,22 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 
 .seal-picker { display:flex; gap:8px; flex-wrap:wrap; }
 .seal-pick-btn {
-  width:44px; height:44px; border:2px solid transparent; border-radius:50%;
+  width:44px; height:44px;
+  border:2px solid transparent;
+  border-radius:47% 53% 49% 51% / 51% 48% 52% 49%;
   cursor:pointer; transition:all .2s; padding:0;
   display:flex; align-items:center; justify-content:center;
-  font-size:16px; color:rgba(255,255,255,.25);
-  box-shadow:0 2px 5px rgba(0,0,0,.25);
-  text-shadow:0 1px 1px rgba(0,0,0,.3);
+  font-size:14px; color:rgba(255,255,255,.15);
+  box-shadow:0 2px 6px rgba(0,0,0,.3), inset 0 1px 3px rgba(255,255,255,.1), inset 0 -2px 4px rgba(0,0,0,.2);
+  text-shadow:0 1px 0 rgba(255,255,255,.06), 0 -1px 0 rgba(0,0,0,.2);
+  position:relative;
 }
-.seal-pick-btn:hover { transform:scale(1.1); }
-.seal-pick-btn.active { border-color:#fff; box-shadow:0 0 0 2px #555, 0 2px 8px rgba(0,0,0,.3); }
+.seal-pick-btn::after {
+  content:''; position:absolute; inset:5px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.06); pointer-events:none;
+}
+.seal-pick-btn:hover { transform:scale(1.12); }
+.seal-pick-btn.active { border-color:#fff; box-shadow:0 0 0 2px #666, 0 3px 8px rgba(0,0,0,.35), inset 0 1px 3px rgba(255,255,255,.1); }
 
 .sticker-tabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
 .sticker-tab { padding:4px 12px; border:1px solid #ddd; border-radius:12px; background:#fff; font-size:12px; font-family:inherit; cursor:pointer; transition:all .15s; }
@@ -210,15 +225,29 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 }
 .env-flap.open { transform:rotateX(-180deg); }
 
-/* 실링: 원형 왁스 스탬프 */
+/* 실링: 리얼 왁스 스탬프 */
 .env-seal {
-  position:absolute; top:58px; left:50%; transform:translateX(-50%);
-  width:52px; height:52px; border-radius:50%;
-  z-index:5; display:flex; align-items:center; justify-content:center;
-  font-size:18px; color:rgba(255,255,255,.2); cursor:pointer;
-  filter:drop-shadow(0 3px 5px rgba(0,0,0,.45));
-  transition:transform .2s;
-  text-shadow:0 1px 2px rgba(0,0,0,.3);
+  position:absolute; top:56px; left:50%; transform:translateX(-50%);
+  width:54px; height:54px;
+  border-radius:47% 53% 49% 51% / 51% 48% 52% 49%;
+  z-index:5; cursor:pointer; transition:transform .2s;
+  box-shadow:
+    0 4px 10px rgba(0,0,0,.45),
+    inset 0 2px 4px rgba(255,255,255,.12),
+    inset 0 -3px 6px rgba(0,0,0,.3),
+    inset 0 0 14px rgba(0,0,0,.12);
+}
+.env-seal .seal-ring {
+  position:absolute; inset:6px; border-radius:50%;
+  border:1.5px solid rgba(255,255,255,.08);
+  box-shadow:inset 0 0 0 1px rgba(0,0,0,.1);
+  pointer-events:none;
+}
+.env-seal .seal-mark {
+  position:relative; z-index:1;
+  font-size:18px; line-height:1;
+  color:rgba(255,255,255,.12);
+  text-shadow:0 1px 0 rgba(255,255,255,.08), 0 -1px 0 rgba(0,0,0,.25);
 }
 .env-seal:hover { transform:translateX(-50%) scale(1.08); }
 .env-seal.cracked { animation:sealPop .5s ease-out forwards; pointer-events:none; }
@@ -268,6 +297,20 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .paper-blue  { background:#F0F4FF; background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(140,160,200,.12) 28px,rgba(140,160,200,.12) 29px); }
 .paper-kraft { background:#D4C4A8; }
 .paper-grid  { background:#FFF8E7; background-image:linear-gradient(rgba(180,160,140,.1) 1px,transparent 1px),linear-gradient(90deg,rgba(180,160,140,.1) 1px,transparent 1px); background-size:18px 18px; }
+
+/* 봉투 질감 */
+.tex-smooth .env-body { }
+.tex-linen .env-body { background-image:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px),repeating-linear-gradient(90deg,transparent,transparent 2px,rgba(255,255,255,.03) 2px,rgba(255,255,255,.03) 4px); }
+.tex-felt .env-body { background-image:url("data:image/svg+xml,%3Csvg width='6' height='6' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='3' cy='3' r='.6' fill='rgba(255,255,255,0.04)'/%3E%3C/svg%3E"); }
+.tex-leather .env-body { background-image:repeating-linear-gradient(45deg,transparent,transparent 3px,rgba(0,0,0,.04) 3px,rgba(0,0,0,.04) 6px); }
+.tex-kraft .env-body { background-image:repeating-linear-gradient(120deg,transparent,transparent 2px,rgba(255,255,255,.02) 2px,rgba(255,255,255,.02) 5px),repeating-linear-gradient(60deg,transparent,transparent 2px,rgba(0,0,0,.02) 2px,rgba(0,0,0,.02) 5px); }
+
+/* 편지 테두리 */
+.border-none { }
+.border-simple { border:2px solid rgba(0,0,0,.12) !important; }
+.border-double { border:3px double rgba(0,0,0,.15) !important; }
+.border-dashed { border:2px dashed rgba(0,0,0,.12) !important; }
+.border-ornate { border:3px solid rgba(0,0,0,.08) !important; outline:1px solid rgba(0,0,0,.06); outline-offset:4px; }
 
 /* Overlay */
 .overlay { position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:100; opacity:0; animation:fadeIn .35s ease forwards; cursor:pointer; }
