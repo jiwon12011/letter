@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.className='envelope-full';
 
     const envSt=(D.stickers||[]).filter(Boolean).map(s=>
-      '<span class="env-sticker" style="left:'+(s.x/100*300)+'px;top:'+(s.y/100*260)+'px">'+s.emoji+'</span>'
+      '<span class="env-sticker" style="left:'+(s.x/100*300)+'px;top:'+(s.y/100*180)+'px">'+s.emoji+'</span>'
     ).join('');
 
     const letSt=(D.letterStickers||[]).filter(Boolean).map(s=>
@@ -289,8 +289,11 @@ document.addEventListener('DOMContentLoaded', () => {
       spawnParticles(seal);
       seal.classList.add('cracked');
 
-      // 2. 플랩 열림
-      setTimeout(()=>flap.classList.add('open'),600);
+      // 2. 플랩 열림 + 안쪽 표시
+      setTimeout(()=>{
+        el.querySelector('.env-inner').classList.add('show');
+        flap.classList.add('open');
+      },600);
 
       // 3. 편지 슬라이드 업
       setTimeout(()=>letter.classList.add('rising'),1600);

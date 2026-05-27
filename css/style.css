@@ -151,33 +151,39 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 
 
 /* ============================================================
-   FULL ENVELOPE (미리보기 & 수신자)
+   FULL ENVELOPE
+   닫힌 상태: 직사각형 몸체 + 삼각 플랩이 앞면에 덮여있음
+   열린 상태: 플랩이 뒤로 젖혀지고 편지가 위로 슬라이드
    ============================================================ */
-/* 봉투: 플랩 꼭지점이 몸체 상단에 정확히 닿도록 계산
-   몸체 높이 160px, 전체 높이 = 160 + 플랩높이(100px) = 260px
-   플랩은 top:0, 꼭지가 아래(100px 지점) → 몸체 top = 100px → bottom:0, height:160px → 전체 260px */
 .envelope-full {
-  position:relative; width:300px; height:260px; cursor:pointer;
+  position:relative; width:300px; height:180px; cursor:pointer;
   perspective:900px;
 }
 
-/* 봉투 몸체 */
+/* 몸체 = 직사각형 전체 */
 .env-body {
-  position:absolute; bottom:0; left:0; width:100%; height:160px;
-  background:var(--env-color); border-radius:0 0 8px 8px; z-index:3;
-  box-shadow:inset 0 2px 8px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.2);
+  position:absolute; inset:0;
+  background:var(--env-color); border-radius:6px; z-index:2;
+  box-shadow:inset 0 2px 8px rgba(0,0,0,.25), 0 4px 16px rgba(0,0,0,.18);
 }
 
-/* 봉투 안쪽 */
+/* 안쪽 — 닫혀있을 땐 숨김, 플랩 열리면 표시 */
 .env-inner {
-  position:absolute; bottom:0; left:0; width:100%; height:160px;
-  background:var(--env-dark); border-radius:0 0 8px 8px; z-index:0;
+  position:absolute; inset:0;
+  background:var(--env-dark); border-radius:6px; z-index:1;
+  visibility:hidden;
 }
+.env-inner.show { visibility:visible; }
 
-/* 플랩: 꼭지점(100px) = 몸체 top(전체260 - 160 = 100px) → 딱 맞음 */
+/* 플랩: 몸체 위에 덮여있는 삼각형
+   base(윗변) = 몸체 상단, 꼭지점 = 아래쪽 중앙
+   transform-origin: top = 힌지 (몸체 상단과 연결점) */
 .env-flap {
-  position:absolute; top:0; left:0; width:100%; height:100px;
-  z-index:4; transform-origin:top center; transform-style:preserve-3d;
+  position:absolute; top:0; left:0;
+  width:100%; height:105px;
+  z-index:3;
+  transform-origin:top center;
+  transform-style:preserve-3d;
   transition:transform 1s cubic-bezier(.4,.0,.15,1);
 }
 .env-flap-front,
@@ -186,7 +192,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
   width:0; height:0;
   border-left:150px solid transparent;
   border-right:150px solid transparent;
-  border-top:100px solid var(--env-light);
+  border-top:105px solid var(--env-light);
 }
 .env-flap-front { backface-visibility:hidden; }
 .env-flap-back {
@@ -196,9 +202,9 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 }
 .env-flap.open { transform:rotateX(-180deg); }
 
-/* 실링 */
+/* 실링: 플랩 꼭지점 부근 */
 .env-seal {
-  position:absolute; bottom:62px; left:50%; transform:translateX(-50%);
+  position:absolute; top:60px; left:50%; transform:translateX(-50%);
   z-index:5; display:flex; align-items:center; justify-content:center;
   color:rgba(255,255,255,.2); cursor:pointer;
   filter:drop-shadow(0 3px 5px rgba(0,0,0,.45));
@@ -213,19 +219,19 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 }
 
 /* To 라벨 */
-.env-to { position:absolute; bottom:18px; left:50%; transform:translateX(-50%); font-family:var(--font-letter); font-size:14px; color:rgba(255,255,255,.5); z-index:4; white-space:nowrap; }
+.env-to { position:absolute; bottom:16px; left:50%; transform:translateX(-50%); font-family:var(--font-letter); font-size:14px; color:rgba(255,255,255,.5); z-index:4; white-space:nowrap; }
 
 /* 봉투/편지지 위 스티커 */
 .env-sticker { position:absolute; font-size:24px; z-index:6; pointer-events:none; user-select:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
 
 /* ===== 편지지 ===== */
 .env-letter {
-  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
-  width:260px; height:0; z-index:1; overflow:hidden;
+  position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+  width:260px; height:0; z-index:0; overflow:hidden;
   border-radius:4px; box-shadow:0 2px 10px rgba(0,0,0,.12);
   transition:height 1s cubic-bezier(.22,1,.36,1), bottom 1s cubic-bezier(.22,1,.36,1);
 }
-.env-letter.rising { height:260px; bottom:180px; }
+.env-letter.rising { height:240px; bottom:100px; }
 
 .env-letter-content { padding:28px 20px; opacity:0; transition:opacity .5s ease .1s; color:var(--ink); }
 .env-letter.expanded .env-letter-content { opacity:1; }
@@ -267,12 +273,11 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
   .decorate-canvas-wrap { width:100%; }
   .decorate-canvas { width:100%; max-width:360px; margin:0 auto; }
   .step-container--wide { width:92vw; }
-  .envelope-full { width:260px; height:226px; }
-  .env-body,.env-inner { height:140px; }
-  .env-flap { height:86px; }
-  .env-flap-front,.env-flap-back { border-left-width:130px; border-right-width:130px; border-top-width:86px; }
-  .env-seal { bottom:54px; }
+  .envelope-full { width:260px; height:156px; }
+  .env-flap { height:91px; }
+  .env-flap-front,.env-flap-back { border-left-width:130px; border-right-width:130px; border-top-width:91px; }
+  .env-seal { top:52px; }
   .env-letter { width:225px; }
-  .env-letter.rising { height:200px; bottom:155px; }
+  .env-letter.rising { height:200px; bottom:86px; }
   .landing-title { font-size:40px; }
 }
