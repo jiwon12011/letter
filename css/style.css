@@ -25,6 +25,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .btn--ghost { background:transparent; color:#666; border:1px solid #ccc; }
 .btn--ghost:hover { background:rgba(0,0,0,.05); }
 .btn--large { padding:16px 36px; font-size:17px; }
+.btn--sm { padding:6px 16px; font-size:12px; margin-top:8px; }
 
 /* ===== Landing ===== */
 .landing { text-align:center; padding:40px 20px; }
@@ -76,7 +77,13 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 /* 데코 봉투 미리보기 — 실제 봉투와 동일 구조 */
 .deco-envelope { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:240px; height:150px; }
 .deco-env-body { position:absolute; inset:0; background:var(--env-color); border-radius:5px; box-shadow:inset 0 2px 6px rgba(0,0,0,.25), 0 4px 14px rgba(0,0,0,.15); }
-.deco-env-flap { position:absolute; top:0; left:0; width:0; height:0; border-left:120px solid transparent; border-right:120px solid transparent; border-top:88px solid var(--env-light); z-index:1; }
+.deco-env-flap { position:absolute; top:0; left:0; width:0; height:0; border-left:120px solid transparent; border-right:120px solid transparent; border-top:88px solid var(--env-light); z-index:1; transition:transform .8s cubic-bezier(.4,0,.15,1), opacity .3s ease .5s, clip-path .8s cubic-bezier(.4,0,.15,1); }
+.deco-open-slideUp { transform:translateY(-100%) scaleY(.3); opacity:0; }
+.deco-open-fadeOut { opacity:0 !important; transform:scale(.95); }
+.deco-open-flip { transform:perspective(300px) rotateX(-160deg); transform-origin:top center; opacity:0; }
+.deco-open-split { clip-path:polygon(0 0,0 0,50% 100%,100% 0,100% 0) !important; opacity:0; }
+.deco-open-shrink { transform:scale(0); transform-origin:50% 80%; opacity:0; }
+.deco-open-rotate { transform:rotate(-90deg) scale(.4); transform-origin:top left; opacity:0; }
 .deco-env-seal {
   position:absolute; left:50%; transform:translateX(-50%);
   z-index:2;

@@ -127,6 +127,42 @@ document.addEventListener('DOMContentLoaded', () => {
   pick('letterBorders','border',b=>{ D.letterBorder=b; refreshLetterPreview(); });
   pick('motionPicker','motion',m=>{ D.motion=m; });
 
+  // 모션 미리보기: 봉투 탭으로 전환 → 플랩 애니메이션 재생 → 리셋
+  $('btnMotionPreview').onclick=function(){
+    // 봉투 탭으로 전환
+    document.querySelectorAll('.deco-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelector('.deco-tab[data-target="envelope"]').classList.add('active');
+    decoTarget='envelope';
+    $('decoCanvasEnvelope').style.display='';
+    $('decoCanvasLetter').style.display='none';
+
+    const flap=$('decoEnvelope').querySelector('.deco-env-flap');
+    const seal=$('decoSeal');
+    if(!flap) return;
+
+    // 리셋
+    flap.className='deco-env-flap';
+    flap.style.opacity=''; flap.style.transform='';
+    seal.style.opacity='';
+    void flap.offsetWidth; // reflow
+
+    // 장식 사라짐
+    setTimeout(()=>{ seal.style.transition='opacity .3s'; seal.style.opacity='0'; },100);
+
+    // 플랩 모션 재생
+    setTimeout(()=>{
+      flap.style.transition='transform .8s cubic-bezier(.4,0,.15,1), opacity .3s ease .5s, clip-path .8s cubic-bezier(.4,0,.15,1)';
+      flap.classList.add('deco-open-'+D.motion);
+    },400);
+
+    // 리셋
+    setTimeout(()=>{
+      flap.className='deco-env-flap';
+      flap.style.transition='none'; flap.style.opacity=''; flap.style.transform=''; flap.style.clipPath='';
+      seal.style.transition='none'; seal.style.opacity='';
+    },2000);
+  };
+
   // 잠금 장식 타입 탭
   document.querySelector('.seal-type-tabs').addEventListener('click',e=>{
     const tab=e.target.closest('.seal-type-tab'); if(!tab) return;
