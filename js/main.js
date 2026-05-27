@@ -153,9 +153,22 @@ document.addEventListener('DOMContentLoaded', () => {
     el.style.background=D.paperColor;
     el.style.fontFamily="'"+D.font+"',cursive";
     el.style.color=D.inkColor;
-    const patterns={none:'',lined:'repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,.06) 28px,rgba(0,0,0,.06) 29px)',dot:'radial-gradient(circle,rgba(0,0,0,.06) 1px,transparent 1px)',grid:'linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px)'};
-    el.style.backgroundImage=patterns[D.paper]||'';
-    el.style.backgroundSize=D.paper==='dot'?'16px 16px':D.paper==='grid'?'18px 18px':'';
+    const P={
+      none:['',''],
+      lined:['repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,.06) 28px,rgba(0,0,0,.06) 29px)',''],
+      dot:['radial-gradient(circle,rgba(0,0,0,.06) 1px,transparent 1px)','16px 16px'],
+      grid:['linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px)','18px 18px'],
+      check:['linear-gradient(45deg,rgba(0,0,0,.04) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.04) 75%),linear-gradient(45deg,rgba(0,0,0,.04) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.04) 75%)','20px 20px'],
+      diamond:['linear-gradient(45deg,rgba(0,0,0,.04) 25%,transparent 25%),linear-gradient(-45deg,rgba(0,0,0,.04) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(0,0,0,.04) 75%),linear-gradient(-45deg,transparent 75%,rgba(0,0,0,.04) 75%)','16px 16px'],
+      wave:['repeating-linear-gradient(0deg,transparent,transparent 14px,rgba(0,0,0,.04) 14px,rgba(0,0,0,.04) 15px),repeating-radial-gradient(circle at 50% 0,transparent,transparent 14px,rgba(0,0,0,.02) 14px,rgba(0,0,0,.02) 15px)','30px 30px'],
+      cross:["url(\"data:image/svg+xml,%3Csvg width='16' height='16' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M8 3v10M3 8h10' stroke='rgba(0,0,0,0.05)' stroke-width='.7'/%3E%3C/svg%3E\")",'16px 16px'],
+      zigzag:["url(\"data:image/svg+xml,%3Csvg width='20' height='10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 5l5-4 5 4 5-4 5 4' fill='none' stroke='rgba(0,0,0,0.05)' stroke-width='.7'/%3E%3C/svg%3E\")",'20px 10px'],
+      star:["url(\"data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='14' text-anchor='middle' font-size='8' fill='rgba(0,0,0,0.04)'%3E✦%3C/text%3E%3C/svg%3E\")",'20px 20px'],
+      heart:["url(\"data:image/svg+xml,%3Csvg width='20' height='20' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='14' text-anchor='middle' font-size='8' fill='rgba(0,0,0,0.04)'%3E♡%3C/text%3E%3C/svg%3E\")",'20px 20px'],
+      stripe:['repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(0,0,0,.04) 6px,rgba(0,0,0,.04) 7px)','']
+    };
+    const pat=P[D.paper]||P.none;
+    el.style.backgroundImage=pat[0]; el.style.backgroundSize=pat[1];
     // Border
     el.className='deco-letter'+(D.letterBorder!=='none'?' border-'+D.letterBorder:'');
     $('decoLetterTo').textContent=D.to+'에게'; $('decoLetterTo').style.color=D.inkColor;
@@ -174,24 +187,34 @@ document.addEventListener('DOMContentLoaded', () => {
     restorePhotos($('decoCanvasLetter'),D.letterPhotos);
   }
 
-  // ===== Photo Upload =====
+  // ===== Photo Upload (리사이즈 후 저장) =====
   $('photoInput').addEventListener('change',function(){
     Array.from(this.files).forEach(file=>{
       if(!file.type.startsWith('image/')) return;
-      const reader=new FileReader();
-      reader.onload=function(e){
-        const dataUrl=e.target.result;
+      resizeImage(file,400,function(dataUrl){
         const arr=decoTarget==='envelope'?D.photos:D.letterPhotos;
         const canvas=decoTarget==='envelope'?$('decoCanvasEnvelope'):$('decoCanvasLetter');
         const x=15+Math.random()*50, y=15+Math.random()*45;
         const rot=Math.round((Math.random()-.5)*12);
         arr.push({dataUrl,x,y,rot});
         addPhoto(canvas,dataUrl,x,y,rot,arr.length-1,arr);
-      };
-      reader.readAsDataURL(file);
+      });
     });
     this.value='';
   });
+
+  function resizeImage(file,maxW,cb){
+    const img=new Image();
+    img.onload=function(){
+      const c=document.createElement('canvas');
+      let w=img.width, h=img.height;
+      if(w>maxW){ h=Math.round(h*maxW/w); w=maxW; }
+      c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',0.7));
+    };
+    img.src=URL.createObjectURL(file);
+  }
 
   function addPhoto(canvas,dataUrl,x,y,rot,idx,arr){
     const el=document.createElement('div');
@@ -287,12 +310,28 @@ document.addEventListener('DOMContentLoaded', () => {
       '<div class="letter-photo" style="left:'+p.x+'%;top:'+p.y+'%;transform:rotate('+(p.rot||0)+'deg)"><img src="'+p.dataUrl+'"></div>'
     ).join('');
 
-    const patCSS={none:'',lined:'background-image:repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,.06) 28px,rgba(0,0,0,.06) 29px);',dot:'background-image:radial-gradient(circle,rgba(0,0,0,.06) 1px,transparent 1px);background-size:16px 16px;',grid:'background-image:linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px);background-size:18px 18px;'};
+    function patStyle(p){
+      const M={
+        none:['',''], lined:['repeating-linear-gradient(0deg,transparent,transparent 28px,rgba(0,0,0,.06) 28px,rgba(0,0,0,.06) 29px)',''],
+        dot:['radial-gradient(circle,rgba(0,0,0,.06) 1px,transparent 1px)','16px 16px'],
+        grid:['linear-gradient(rgba(0,0,0,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.05) 1px,transparent 1px)','18px 18px'],
+        check:['linear-gradient(45deg,rgba(0,0,0,.04) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.04) 75%),linear-gradient(45deg,rgba(0,0,0,.04) 25%,transparent 25%,transparent 75%,rgba(0,0,0,.04) 75%)','20px 20px'],
+        diamond:['linear-gradient(45deg,rgba(0,0,0,.04) 25%,transparent 25%),linear-gradient(-45deg,rgba(0,0,0,.04) 25%,transparent 25%),linear-gradient(45deg,transparent 75%,rgba(0,0,0,.04) 75%),linear-gradient(-45deg,transparent 75%,rgba(0,0,0,.04) 75%)','16px 16px'],
+        wave:['repeating-linear-gradient(0deg,transparent,transparent 14px,rgba(0,0,0,.04) 14px,rgba(0,0,0,.04) 15px)',''],
+        cross:['url("data:image/svg+xml,%3Csvg width=\'16\' height=\'16\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M8 3v10M3 8h10\' stroke=\'rgba(0,0,0,0.05)\' stroke-width=\'.7\'/%3E%3C/svg%3E")','16px 16px'],
+        zigzag:['url("data:image/svg+xml,%3Csvg width=\'20\' height=\'10\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M0 5l5-4 5 4 5-4 5 4\' fill=\'none\' stroke=\'rgba(0,0,0,0.05)\' stroke-width=\'.7\'/%3E%3C/svg%3E")','20px 10px'],
+        star:['url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ctext x=\'10\' y=\'14\' text-anchor=\'middle\' font-size=\'8\' fill=\'rgba(0,0,0,0.04)\'%3E✦%3C/text%3E%3C/svg%3E")','20px 20px'],
+        heart:['url("data:image/svg+xml,%3Csvg width=\'20\' height=\'20\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Ctext x=\'10\' y=\'14\' text-anchor=\'middle\' font-size=\'8\' fill=\'rgba(0,0,0,0.04)\'%3E♡%3C/text%3E%3C/svg%3E")','20px 20px'],
+        stripe:['repeating-linear-gradient(45deg,transparent,transparent 6px,rgba(0,0,0,.04) 6px,rgba(0,0,0,.04) 7px)','']
+      };
+      const v=M[p]||M.none;
+      return (v[0]?'background-image:'+v[0]+';':'')+(v[1]?'background-size:'+v[1]+';':'');
+    }
     const borderCls=D.letterBorder!=='none'?' border-'+D.letterBorder:'';
 
     el.innerHTML=
       '<div class="env-inner"></div>'+
-      '<div class="env-letter'+borderCls+'" style="background:'+D.paperColor+';'+(patCSS[D.paper]||'')+'position:relative">'+
+      '<div class="env-letter'+borderCls+'" style="background:'+D.paperColor+';'+patStyle(D.paper)+'position:relative">'+
         '<div class="env-letter-content" style="font-family:\''+D.font+'\',cursive;color:'+D.inkColor+'">'+
           '<p class="env-letter-greeting" style="color:'+D.inkColor+'">'+esc(D.to)+'에게</p>'+
           '<p class="env-letter-body">'+esc(D.body)+'</p>'+
