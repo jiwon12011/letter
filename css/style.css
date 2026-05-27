@@ -73,12 +73,12 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 }
 .canvas-hint { font-size:11px; color:#aaa; margin-top:6px; line-height:1.4; }
 
-/* 데코 봉투 미리보기 */
-.deco-envelope { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:260px; height:180px; }
-.deco-env-body { position:absolute; bottom:0; left:0; width:100%; height:140px; background:var(--env-color); border-radius:0 0 6px 6px; box-shadow:inset 0 2px 6px rgba(0,0,0,.3), 0 4px 16px rgba(0,0,0,.15); }
-.deco-env-flap { position:absolute; top:5px; left:0; width:0; height:0; border-left:130px solid transparent; border-right:130px solid transparent; border-top:105px solid var(--env-light); }
-.deco-env-seal { position:absolute; bottom:42px; left:50%; transform:translateX(-50%); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.2); z-index:2; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
-.deco-env-to { position:absolute; bottom:12px; left:50%; transform:translateX(-50%); font-family:var(--font-letter); font-size:12px; color:rgba(255,255,255,.5); z-index:2; white-space:nowrap; }
+/* 데코 봉투 미리보기 — 실제 봉투와 동일 구조 */
+.deco-envelope { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:240px; height:150px; }
+.deco-env-body { position:absolute; inset:0; background:var(--env-color); border-radius:5px; box-shadow:inset 0 2px 6px rgba(0,0,0,.25), 0 4px 14px rgba(0,0,0,.15); }
+.deco-env-flap { position:absolute; top:0; left:0; width:0; height:0; border-left:120px solid transparent; border-right:120px solid transparent; border-top:88px solid var(--env-light); z-index:1; }
+.deco-env-seal { position:absolute; top:52px; left:50%; transform:translateX(-50%); z-index:2; filter:drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
+.deco-env-to { position:absolute; bottom:10px; left:50%; transform:translateX(-50%); font-family:var(--font-letter); font-size:11px; color:rgba(255,255,255,.5); z-index:2; white-space:nowrap; }
 
 /* 데코 편지지 미리보기 */
 .decorate-canvas--letter { background:transparent; }
@@ -106,10 +106,12 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .decorate-options { flex:1; display:flex; flex-direction:column; gap:16px; overflow-y:auto; max-height:75vh; padding-right:4px; }
 .option-group h3 { font-size:13px; color:#666; margin-bottom:8px; font-weight:600; }
 
-.color-picker { display:flex; gap:8px; flex-wrap:wrap; }
-.color-swatch { width:36px; height:36px; border-radius:50%; border:3px solid transparent; cursor:pointer; transition:all .2s; box-shadow:0 1px 3px rgba(0,0,0,.2); }
-.color-swatch:hover { transform:scale(1.1); }
-.color-swatch.active { border-color:#fff; box-shadow:0 0 0 2px #555, 0 2px 6px rgba(0,0,0,.3); }
+/* 컬러 피커 */
+.picker-row { display:flex; align-items:center; gap:10px; }
+.color-input { width:44px; height:36px; border:none; border-radius:6px; cursor:pointer; padding:0; background:none; }
+.color-input::-webkit-color-swatch-wrapper { padding:2px; }
+.color-input::-webkit-color-swatch { border:1px solid rgba(0,0,0,.15); border-radius:4px; }
+.picker-label { font-size:12px; color:#999; }
 
 .paper-picker,.font-picker { display:flex; gap:6px; flex-wrap:wrap; }
 .font-picker--grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(90px,1fr)); gap:6px; }
@@ -119,10 +121,16 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .font-option { font-size:15px; padding:8px 10px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
 .seal-picker { display:flex; gap:8px; flex-wrap:wrap; }
-.seal-pick-btn { width:48px; height:48px; border:2px solid #ddd; border-radius:8px; background:#f9f6f2; cursor:pointer; transition:all .2s; padding:4px; display:flex; align-items:center; justify-content:center; }
-.seal-pick-btn:hover { border-color:#999; transform:scale(1.05); }
-.seal-pick-btn.active { border-color:var(--env-color); box-shadow:0 0 0 2px rgba(116,21,24,.2); }
-.seal-pick-btn .mini-seal { filter:drop-shadow(0 1px 2px rgba(0,0,0,.3)); display:flex; align-items:center; justify-content:center; }
+.seal-pick-btn {
+  width:44px; height:44px; border:2px solid transparent; border-radius:50%;
+  cursor:pointer; transition:all .2s; padding:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:16px; color:rgba(255,255,255,.25);
+  box-shadow:0 2px 5px rgba(0,0,0,.25);
+  text-shadow:0 1px 1px rgba(0,0,0,.3);
+}
+.seal-pick-btn:hover { transform:scale(1.1); }
+.seal-pick-btn.active { border-color:#fff; box-shadow:0 0 0 2px #555, 0 2px 8px rgba(0,0,0,.3); }
 
 .sticker-tabs { display:flex; gap:4px; flex-wrap:wrap; margin-bottom:8px; }
 .sticker-tab { padding:4px 12px; border:1px solid #ddd; border-radius:12px; background:#fff; font-size:12px; font-family:inherit; cursor:pointer; transition:all .15s; }
@@ -202,13 +210,15 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 }
 .env-flap.open { transform:rotateX(-180deg); }
 
-/* 실링: 플랩 꼭지점 부근 */
+/* 실링: 원형 왁스 스탬프 */
 .env-seal {
-  position:absolute; top:60px; left:50%; transform:translateX(-50%);
+  position:absolute; top:58px; left:50%; transform:translateX(-50%);
+  width:52px; height:52px; border-radius:50%;
   z-index:5; display:flex; align-items:center; justify-content:center;
-  color:rgba(255,255,255,.2); cursor:pointer;
+  font-size:18px; color:rgba(255,255,255,.2); cursor:pointer;
   filter:drop-shadow(0 3px 5px rgba(0,0,0,.45));
   transition:transform .2s;
+  text-shadow:0 1px 2px rgba(0,0,0,.3);
 }
 .env-seal:hover { transform:translateX(-50%) scale(1.08); }
 .env-seal.cracked { animation:sealPop .5s ease-out forwards; pointer-events:none; }
