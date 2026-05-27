@@ -133,7 +133,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .sticker-btn:hover { background:#f5f0eb; transform:scale(1.12); border-color:#bbb; }
 
 /* ===== Send ===== */
-.send-preview { min-height:360px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.03); border-radius:16px; margin-bottom:20px; }
+.send-preview { min-height:400px; display:flex; align-items:center; justify-content:center; background:rgba(0,0,0,.03); border-radius:16px; margin-bottom:20px; }
 .send-actions { display:flex; gap:10px; justify-content:center; margin-bottom:14px; flex-wrap:wrap; }
 .toast { position:fixed; bottom:36px; left:50%; transform:translateX(-50%) translateY(16px); background:#333; color:#fff; padding:12px 24px; border-radius:8px; font-size:14px; opacity:0; pointer-events:none; transition:all .3s; z-index:999; }
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
@@ -142,7 +142,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .page--receive { flex-direction:column; background:#3D0205; background-image:radial-gradient(circle,#5C060A 0%,#2A0103 100%); }
 .receive-container { text-align:center; padding:40px 20px; width:100%; }
 .receive-to { font-size:18px; color:rgba(255,255,255,.55); margin-bottom:32px; font-family:var(--font-letter); letter-spacing:2px; }
-.receive-scene { display:flex; justify-content:center; align-items:center; min-height:340px; }
+.receive-scene { display:flex; justify-content:center; align-items:center; min-height:400px; }
 .receive-hint { margin-top:20px; font-size:13px; color:rgba(255,255,255,.35); letter-spacing:1px; animation:hintPulse 2s ease-in-out infinite; }
 .receive-hint.hidden { opacity:0; transition:opacity .3s; }
 .receive-reply { margin-top:24px; color:rgba(255,255,255,.5); border-color:rgba(255,255,255,.25); }
@@ -153,27 +153,30 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 /* ============================================================
    FULL ENVELOPE (미리보기 & 수신자)
    ============================================================ */
+/* 봉투: 플랩 꼭지점이 몸체 상단에 정확히 닿도록 계산
+   몸체 높이 160px, 전체 높이 = 160 + 플랩높이(100px) = 260px
+   플랩은 top:0, 꼭지가 아래(100px 지점) → 몸체 top = 100px → bottom:0, height:160px → 전체 260px */
 .envelope-full {
-  position:relative; width:300px; height:200px; cursor:pointer;
+  position:relative; width:300px; height:260px; cursor:pointer;
   perspective:900px;
 }
 
-/* 봉투 몸체 (앞면) */
+/* 봉투 몸체 */
 .env-body {
   position:absolute; bottom:0; left:0; width:100%; height:160px;
   background:var(--env-color); border-radius:0 0 8px 8px; z-index:3;
   box-shadow:inset 0 2px 8px rgba(0,0,0,.3), 0 6px 20px rgba(0,0,0,.2);
 }
 
-/* 봉투 안쪽 (플랩 열리면 보임) */
+/* 봉투 안쪽 */
 .env-inner {
-  position:absolute; top:40px; left:0; width:100%; height:160px;
+  position:absolute; bottom:0; left:0; width:100%; height:160px;
   background:var(--env-dark); border-radius:0 0 8px 8px; z-index:0;
 }
 
-/* 플랩 — border trick (3D 회전 호환) */
+/* 플랩: 꼭지점(100px) = 몸체 top(전체260 - 160 = 100px) → 딱 맞음 */
 .env-flap {
-  position:absolute; top:0; left:0; width:100%; height:120px;
+  position:absolute; top:0; left:0; width:100%; height:100px;
   z-index:4; transform-origin:top center; transform-style:preserve-3d;
   transition:transform 1s cubic-bezier(.4,.0,.15,1);
 }
@@ -183,7 +186,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
   width:0; height:0;
   border-left:150px solid transparent;
   border-right:150px solid transparent;
-  border-top:120px solid var(--env-light);
+  border-top:100px solid var(--env-light);
 }
 .env-flap-front { backface-visibility:hidden; }
 .env-flap-back {
@@ -195,7 +198,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 
 /* 실링 */
 .env-seal {
-  position:absolute; bottom:52px; left:50%; transform:translateX(-50%);
+  position:absolute; bottom:62px; left:50%; transform:translateX(-50%);
   z-index:5; display:flex; align-items:center; justify-content:center;
   color:rgba(255,255,255,.2); cursor:pointer;
   filter:drop-shadow(0 3px 5px rgba(0,0,0,.45));
@@ -210,19 +213,19 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 }
 
 /* To 라벨 */
-.env-to { position:absolute; bottom:14px; left:50%; transform:translateX(-50%); font-family:var(--font-letter); font-size:14px; color:rgba(255,255,255,.5); z-index:4; white-space:nowrap; }
+.env-to { position:absolute; bottom:18px; left:50%; transform:translateX(-50%); font-family:var(--font-letter); font-size:14px; color:rgba(255,255,255,.5); z-index:4; white-space:nowrap; }
 
 /* 봉투/편지지 위 스티커 */
 .env-sticker { position:absolute; font-size:24px; z-index:6; pointer-events:none; user-select:none; filter:drop-shadow(0 1px 2px rgba(0,0,0,.25)); }
 
 /* ===== 편지지 ===== */
 .env-letter {
-  position:absolute; bottom:8px; left:50%; transform:translateX(-50%);
+  position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
   width:260px; height:0; z-index:1; overflow:hidden;
   border-radius:4px; box-shadow:0 2px 10px rgba(0,0,0,.12);
   transition:height 1s cubic-bezier(.22,1,.36,1), bottom 1s cubic-bezier(.22,1,.36,1);
 }
-.env-letter.rising { height:260px; bottom:130px; }
+.env-letter.rising { height:260px; bottom:180px; }
 
 .env-letter-content { padding:28px 20px; opacity:0; transition:opacity .5s ease .1s; color:var(--ink); }
 .env-letter.expanded .env-letter-content { opacity:1; }
@@ -264,12 +267,12 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
   .decorate-canvas-wrap { width:100%; }
   .decorate-canvas { width:100%; max-width:360px; margin:0 auto; }
   .step-container--wide { width:92vw; }
-  .envelope-full { width:260px; height:178px; }
-  .env-body { height:142px; }
-  .env-inner { top:36px; height:142px; }
-  .env-flap { height:105px; }
-  .env-flap-front,.env-flap-back { border-left-width:130px; border-right-width:130px; border-top-width:105px; }
+  .envelope-full { width:260px; height:226px; }
+  .env-body,.env-inner { height:140px; }
+  .env-flap { height:86px; }
+  .env-flap-front,.env-flap-back { border-left-width:130px; border-right-width:130px; border-top-width:86px; }
+  .env-seal { bottom:54px; }
   .env-letter { width:225px; }
-  .env-letter.rising { height:220px; bottom:115px; }
+  .env-letter.rising { height:200px; bottom:155px; }
   .landing-title { font-size:40px; }
 }

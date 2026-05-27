@@ -2,14 +2,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ===== Seal Designs =====
   const sealDesigns = {
-    heart:   { name:'하트',   w:56, h:52, clip:"path('M28 50C28 50 3 30 3 17C3 8 9 2 17 2C22 2 26 5 28 10C30 5 34 2 39 2C47 2 53 8 53 17C53 30 28 50 28 50Z')", bg:'radial-gradient(circle at 38% 35%,#e25555,#8B0000 55%,#5a0000)', mark:'♡' },
-    star:    { name:'별',     w:56, h:54, clip:'polygon(50% 0%,62% 35%,100% 38%,70% 60%,80% 98%,50% 75%,20% 98%,30% 60%,0% 38%,38% 35%)', bg:'radial-gradient(circle at 38% 35%,#e8b830,#9A7B0A 55%,#5C4A00)', mark:'☆' },
-    moon:    { name:'달',     w:44, h:52, clip:"path('M34 2C43 8 48 18 48 30C48 42 40 52 28 52C33 46 36 38 36 30C36 18 30 8 20 3C25 1 30 0 34 2Z')", bg:'radial-gradient(circle at 42% 30%,#B8C9E0,#5A7599 55%,#2C3E56)', mark:'☽' },
-    flower:  { name:'꽃',     w:56, h:56, clip:'polygon(50% 0%,64% 10%,80% 2%,90% 18%,100% 35%,90% 50%,100% 65%,90% 82%,78% 98%,62% 88%,50% 100%,38% 88%,22% 98%,10% 82%,0% 65%,10% 50%,0% 35%,10% 18%,20% 2%,36% 10%)', bg:'radial-gradient(circle at 38% 35%,#F48FB1,#C2185B 55%,#880E4F)', mark:'❀' },
-    diamond: { name:'다이아', w:50, h:58, clip:'polygon(50% 0%,100% 50%,50% 100%,0% 50%)', bg:'radial-gradient(circle at 38% 35%,#CE93D8,#7B1FA2 55%,#4A148C)', mark:'◇' },
-    clover:  { name:'클로버', w:54, h:54, clip:"path('M27 0C31 0 35 5 35 12C41 5 47 5 50 9C53 14 50 20 44 23C50 26 53 32 50 37C47 41 41 41 35 34C35 41 31 46 27 46C23 46 19 41 19 34C13 41 7 41 4 37C1 32 4 26 10 23C4 20 1 14 4 9C7 5 13 5 19 12C19 5 23 0 27 0Z')", bg:'radial-gradient(circle at 38% 35%,#66BB6A,#2E7D32 55%,#1B5E20)', mark:'♧' },
-    cross:   { name:'십자',   w:54, h:54, clip:'polygon(33% 0%,67% 0%,67% 33%,100% 33%,100% 67%,67% 67%,67% 100%,33% 100%,33% 67%,0% 67%,0% 33%,33% 33%)', bg:'radial-gradient(circle at 38% 35%,#d44,#8B0000 55%,#5a0000)', mark:'✚' },
-    sun:     { name:'태양',   w:58, h:58, clip:'polygon(50% 0%,58% 20%,75% 5%,70% 26%,93% 20%,80% 38%,100% 42%,82% 52%,95% 70%,75% 65%,80% 88%,62% 76%,55% 100%,45% 76%,30% 92%,25% 70%,5% 75%,18% 55%,0% 42%,20% 36%,5% 22%,25% 26%,22% 5%,38% 22%)', bg:'radial-gradient(circle at 38% 35%,#FFD54F,#F9A825 55%,#E65100)', mark:'☀' }
+    heart:   { name:'하트',   w:52, h:48, clip:"path('M26 46C26 46 2 28 2 16C2 7 8 2 15 2C20 2 24 5 26 9C28 5 32 2 37 2C44 2 50 7 50 16C50 28 26 46 26 46Z')", bg:'radial-gradient(circle at 38% 35%,#e25555,#8B0000 55%,#5a0000)', mark:'♡' },
+    star:    { name:'별',     w:52, h:50, clip:'polygon(50% 0%,62% 35%,100% 38%,70% 60%,80% 98%,50% 75%,20% 98%,30% 60%,0% 38%,38% 35%)', bg:'radial-gradient(circle at 38% 35%,#e8b830,#9A7B0A 55%,#5C4A00)', mark:'☆' },
+    round:   { name:'원형',   w:52, h:52, clip:'circle(50%)', bg:'radial-gradient(circle at 38% 35%,#d44,#8B0000 55%,#5a0000)', mark:'✦' },
+    flower:  { name:'꽃',     w:52, h:52, clip:'polygon(50% 0%,63% 12%,78% 4%,88% 18%,100% 34%,88% 50%,100% 66%,88% 82%,78% 96%,63% 88%,50% 100%,37% 88%,22% 96%,12% 82%,0% 66%,12% 50%,0% 34%,12% 18%,22% 4%,37% 12%)', bg:'radial-gradient(circle at 38% 35%,#F48FB1,#C2185B 55%,#880E4F)', mark:'❀' },
+    diamond: { name:'다이아', w:48, h:52, clip:'polygon(50% 0%,100% 50%,50% 100%,0% 50%)', bg:'radial-gradient(circle at 38% 35%,#CE93D8,#7B1FA2 55%,#4A148C)', mark:'◇' },
+    hexagon: { name:'육각',   w:52, h:52, clip:'polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)', bg:'radial-gradient(circle at 38% 35%,#66BB6A,#2E7D32 55%,#1B5E20)', mark:'♧' },
+    shield:  { name:'방패',   w:48, h:54, clip:'polygon(50% 100%,5% 70%,0% 10%,15% 0%,85% 0%,100% 10%,95% 70%)', bg:'radial-gradient(circle at 38% 35%,#5A7599,#2C3E56 55%,#1a2a3a)', mark:'⛊' },
+    octagon: { name:'팔각',   w:52, h:52, clip:'polygon(30% 0%,70% 0%,100% 30%,100% 70%,70% 100%,30% 100%,0% 70%,0% 30%)', bg:'radial-gradient(circle at 38% 35%,#FFB74D,#E65100 55%,#BF360C)', mark:'☀' }
   };
 
   const stickerData = {
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.className='envelope-full';
 
     const envSt=(D.stickers||[]).filter(Boolean).map(s=>
-      '<span class="env-sticker" style="left:'+(s.x/100*300)+'px;top:'+(s.y/100*200)+'px">'+s.emoji+'</span>'
+      '<span class="env-sticker" style="left:'+(s.x/100*300)+'px;top:'+(s.y/100*260)+'px">'+s.emoji+'</span>'
     ).join('');
 
     const letSt=(D.letterStickers||[]).filter(Boolean).map(s=>
