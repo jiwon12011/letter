@@ -184,7 +184,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .opt-cat-panel { display:none; animation:catIn .25s ease; }
 .opt-cat-panel.active { display:block; }
 @keyframes catIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
-.decorate-options { display:flex; flex-direction:column; gap:0; overflow-y:auto; max-height:65vh; padding-right:4px; scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.12) transparent; }
+.decorate-options { height:420px; overflow-y:auto; padding-right:4px; scrollbar-width:thin; scrollbar-color:rgba(0,0,0,.12) transparent; }
 .decorate-options::-webkit-scrollbar { width:5px; }
 .decorate-options::-webkit-scrollbar-track { background:transparent; }
 .decorate-options::-webkit-scrollbar-thumb { background:rgba(0,0,0,.12); border-radius:4px; }
@@ -552,5 +552,5 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
   .landing-title { font-size:40px; }
   .receive-container { padding-bottom:calc(40px + env(safe-area-inset-bottom,0px)); }
   .step-nav { padding-bottom:env(safe-area-inset-bottom,0px); }
-  .decorate-options { max-height:60vh; }
+  .decorate-options { height:50vh; }
 }
