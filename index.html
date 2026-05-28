@@ -127,6 +127,33 @@
           </div>
 
           <div class="option-group">
+            <h3>받는 사람 배경</h3>
+            <p class="option-desc">링크를 열었을 때 보이는 배경을 설정합니다</p>
+            <div class="picker-row" style="margin-bottom:8px">
+              <input type="color" id="receiveBgColorPicker" value="#3D0205" class="color-input">
+              <span class="picker-label">배경 색상 직접 선택</span>
+            </div>
+            <div class="receive-bg-presets" id="receiveBgPresets">
+              <button class="rbg-btn active" data-rbg="default" title="기본" style="background:radial-gradient(circle,#5C060A,#2A0103)"></button>
+              <button class="rbg-btn" data-rbg="night" title="밤하늘" style="background:linear-gradient(135deg,#0c0b2e,#1a1a4e,#2d1b69)"></button>
+              <button class="rbg-btn" data-rbg="sunset" title="노을" style="background:linear-gradient(135deg,#2d1b36,#5c2e4e,#a04830,#c97b3a)"></button>
+              <button class="rbg-btn" data-rbg="ocean" title="바다" style="background:linear-gradient(135deg,#0a1628,#122a4e,#1a4a6e)"></button>
+              <button class="rbg-btn" data-rbg="forest" title="숲" style="background:linear-gradient(135deg,#0a1f0a,#1a3a1a,#2a4a2a)"></button>
+              <button class="rbg-btn" data-rbg="pink" title="핑크" style="background:linear-gradient(135deg,#2d1020,#4a1a3a,#6a2a5a)"></button>
+              <button class="rbg-btn" data-rbg="lavender" title="라벤더" style="background:linear-gradient(135deg,#1a1028,#2a1a4a,#4a2a6a)"></button>
+              <button class="rbg-btn" data-rbg="cream" title="크림" style="background:linear-gradient(135deg,#3a3020,#5a4a30,#6a5a40)"></button>
+              <button class="rbg-btn" data-rbg="dark" title="다크" style="background:linear-gradient(135deg,#111,#222,#1a1a1a)"></button>
+              <button class="rbg-btn" data-rbg="white" title="화이트" style="background:linear-gradient(135deg,#e8e4e0,#f5f2ee,#e8e4e0)"></button>
+            </div>
+            <label class="photo-upload-btn" for="receiveBgInput" style="margin-top:8px">🖼️ 배경 이미지 업로드</label>
+            <input type="file" id="receiveBgInput" accept="image/*" hidden>
+            <div class="receive-bg-preview-wrap" id="receiveBgPreviewWrap" style="display:none">
+              <div class="receive-bg-thumb" id="receiveBgThumb"></div>
+              <button class="btn btn--ghost btn--sm" id="receiveBgRemove">✕ 제거</button>
+            </div>
+          </div>
+
+          <div class="option-group">
             <h3>글씨 색상</h3>
             <div class="picker-row">
               <input type="color" id="inkColorPicker" value="#2C1810" class="color-input">

@@ -184,6 +184,14 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .sticker-tab.active { background:var(--env-color); color:#fff; border-color:var(--env-color); }
 .sticker-palette { display:flex; gap:5px; flex-wrap:wrap; }
 
+/* 받는 사람 배경 프리셋 */
+.receive-bg-presets { display:flex; gap:6px; flex-wrap:wrap; }
+.rbg-btn { width:44px; height:44px; border:2px solid rgba(0,0,0,.1); border-radius:8px; cursor:pointer; transition:all .15s; }
+.rbg-btn:hover { transform:scale(1.08); border-color:rgba(0,0,0,.25); }
+.rbg-btn.active { border-color:var(--env-color); box-shadow:0 0 0 2px rgba(116,21,24,.3); }
+.receive-bg-preview-wrap { display:flex; align-items:center; gap:8px; margin-top:8px; }
+.receive-bg-thumb { width:60px; height:40px; border-radius:6px; background-size:cover; background-position:center; border:1px solid #ddd; }
+
 /* 사진 업로드 */
 .option-desc { font-size:11px; color:#aaa; margin-bottom:8px; line-height:1.4; }
 .photo-upload-btn {
@@ -203,7 +211,7 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .toast.show { opacity:1; transform:translateX(-50%) translateY(0); }
 
 /* ===== Receive ===== */
-.page--receive { flex-direction:column; background:#3D0205; background-image:radial-gradient(circle,#5C060A 0%,#2A0103 100%); }
+.page--receive { flex-direction:column; background:#3D0205; background-image:radial-gradient(circle,#5C060A 0%,#2A0103 100%); background-size:cover; background-position:center; }
 .receive-container { text-align:center; padding:40px 20px; width:100%; }
 .receive-to { font-size:18px; color:rgba(255,255,255,.55); margin-bottom:32px; font-family:var(--font-letter); letter-spacing:2px; }
 .receive-scene { display:flex; justify-content:center; align-items:center; min-height:400px; }

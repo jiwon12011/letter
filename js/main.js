@@ -51,7 +51,21 @@ document.addEventListener('DOMContentLoaded', () => {
     envelopeColor:'#741518', paperColor:'#FFF8E7', inkColor:'#2C1810',
     paper:'none', seal:'tape-pink', font:'Nanum Pen Script',
     texture:'smooth', letterBorder:'none', motion:'slideUp', align:'left',
-    stickers:[], letterStickers:[], photos:[], letterPhotos:[]
+    stickers:[], letterStickers:[], photos:[], letterPhotos:[],
+    receiveBg:'default', receiveBgValue:''
+  };
+
+  const receiveBgPresets = {
+    default:'radial-gradient(circle,#5C060A 0%,#2A0103 100%)',
+    night:'linear-gradient(135deg,#0c0b2e 0%,#1a1a4e 40%,#2d1b69 100%)',
+    sunset:'linear-gradient(135deg,#2d1b36 0%,#5c2e4e 30%,#a04830 60%,#c97b3a 100%)',
+    ocean:'linear-gradient(135deg,#0a1628 0%,#122a4e 40%,#1a4a6e 100%)',
+    forest:'linear-gradient(135deg,#0a1f0a 0%,#1a3a1a 40%,#2a4a2a 100%)',
+    pink:'linear-gradient(135deg,#2d1020 0%,#4a1a3a 40%,#6a2a5a 100%)',
+    lavender:'linear-gradient(135deg,#1a1028 0%,#2a1a4a 40%,#4a2a6a 100%)',
+    cream:'linear-gradient(135deg,#3a3020 0%,#5a4a30 40%,#6a5a40 100%)',
+    dark:'linear-gradient(135deg,#111 0%,#222 40%,#1a1a1a 100%)',
+    white:'linear-gradient(135deg,#e8e4e0 0%,#f5f2ee 40%,#e8e4e0 100%)'
   };
   let curTab='love', decoTarget='envelope';
 
@@ -77,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const data=JSON.parse(new TextDecoder().decode(bytes));
         Object.assign(D,data);
         ['stickers','letterStickers','photos','letterPhotos'].forEach(k=>{ if(!D[k]) D[k]=[]; });
+        if(!D.receiveBg) D.receiveBg='default';
         showPage('pageReceive'); renderReceive(); return;
       }catch(e){ console.error('링크 파싱 실패',e); }
     }
@@ -110,6 +125,64 @@ document.addEventListener('DOMContentLoaded', () => {
   $('envColorPicker').oninput=function(){ D.envelopeColor=this.value; applyColor(this.value); syncDecoPreview(); };
   $('paperColorPicker').oninput=function(){ D.paperColor=this.value; refreshLetterPreview(); };
   $('inkColorPicker').oninput=function(){ D.inkColor=this.value; refreshLetterPreview(); };
+
+  // 받는 사람 배경
+  $('receiveBgColorPicker').oninput=function(){
+    D.receiveBg='color'; D.receiveBgValue=this.value;
+    $('receiveBgPresets').querySelectorAll('.rbg-btn').forEach(b=>b.classList.remove('active'));
+    $('receiveBgPreviewWrap').style.display='none';
+  };
+  $('receiveBgPresets').addEventListener('click',e=>{
+    const btn=e.target.closest('.rbg-btn'); if(!btn) return;
+    $('receiveBgPresets').querySelectorAll('.rbg-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    D.receiveBg=btn.dataset.rbg; D.receiveBgValue='';
+    $('receiveBgColorPicker').value='#3D0205';
+    $('receiveBgPreviewWrap').style.display='none';
+  });
+  $('receiveBgInput').addEventListener('change',function(){
+    const file=this.files[0]; if(!file||!file.type.startsWith('image/')) return;
+    compressImage(file,400,0.3,function(smallUrl){
+      D.receiveBg='image'; D.receiveBgValue=smallUrl;
+      $('receiveBgPresets').querySelectorAll('.rbg-btn').forEach(b=>b.classList.remove('active'));
+      $('receiveBgThumb').style.backgroundImage='url('+smallUrl+')';
+      $('receiveBgPreviewWrap').style.display='flex';
+    });
+    this.value='';
+  });
+  $('receiveBgRemove').onclick=function(){
+    D.receiveBg='default'; D.receiveBgValue='';
+    $('receiveBgPreviewWrap').style.display='none';
+    $('receiveBgPresets').querySelector('[data-rbg="default"]').classList.add('active');
+  };
+
+  function compressImage(file,maxW,quality,cb){
+    const img=new Image();
+    img.onload=function(){
+      const c=document.createElement('canvas');
+      let w=img.width, h=img.height;
+      if(w>maxW){ h=Math.round(h*maxW/w); w=maxW; }
+      c.width=w; c.height=h;
+      c.getContext('2d').drawImage(img,0,0,w,h);
+      cb(c.toDataURL('image/jpeg',quality));
+    };
+    img.src=URL.createObjectURL(file);
+  }
+
+  function recompressDataUrl(dataUrl,maxW,quality){
+    return new Promise(resolve=>{
+      const img=new Image();
+      img.onload=function(){
+        const c=document.createElement('canvas');
+        let w=img.width, h=img.height;
+        if(w>maxW){ h=Math.round(h*maxW/w); w=maxW; }
+        c.width=w; c.height=h;
+        c.getContext('2d').drawImage(img,0,0,w,h);
+        resolve(c.toDataURL('image/jpeg',quality));
+      };
+      img.src=dataUrl;
+    });
+  }
 
   function applyColor(hex){
     const r=parseInt(hex.slice(1,3),16),g=parseInt(hex.slice(3,5),16),b=parseInt(hex.slice(5,7),16);
@@ -455,31 +528,73 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderSendPreview(){ const w=$('sendPreview'); w.innerHTML=''; w.appendChild(buildEnvelope(true)); }
 
-  $('btnCopyLink').onclick=()=>{
+  $('btnCopyLink').onclick=async()=>{
+    const compressPhotos=async(arr)=>Promise.all(
+      (arr||[]).filter(Boolean).map(async p=>({...p, dataUrl:await recompressDataUrl(p.dataUrl,150,0.4)}))
+    );
+    const [photos,letterPhotos]=await Promise.all([compressPhotos(D.photos),compressPhotos(D.letterPhotos)]);
     const clean=Object.assign({},D,{
       stickers:(D.stickers||[]).filter(Boolean),
       letterStickers:(D.letterStickers||[]).filter(Boolean),
-      photos:[], letterPhotos:[]
+      photos, letterPhotos
     });
     const bytes=new TextEncoder().encode(JSON.stringify(clean));
     let bin=''; bytes.forEach(b=>bin+=String.fromCharCode(b));
     const url=location.origin+location.pathname+'#letter='+toUrlSafeB64(bin);
 
-    const hasPhotos=(D.photos||[]).filter(Boolean).length+(D.letterPhotos||[]).filter(Boolean).length;
+    const copyUrl=u=>{
+      navigator.clipboard.writeText(u).then(()=>{
+        toast('링크가 복사되었습니다!');
+      }).catch(()=>{
+        const t=document.createElement('textarea'); t.value=u;
+        document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
+        toast('링크가 복사되었습니다!');
+      });
+    };
 
-    navigator.clipboard.writeText(url).then(()=>{
-      toast(hasPhotos?'링크 복사 완료! (사진은 링크에 포함되지 않습니다)':'링크가 복사되었습니다!');
-    }).catch(()=>{
-      const t=document.createElement('textarea'); t.value=url;
-      document.body.appendChild(t); t.select(); document.execCommand('copy'); t.remove();
-      toast(hasPhotos?'링크 복사 완료! (사진은 링크에 포함되지 않습니다)':'링크가 복사되었습니다!');
-    });
+    if(url.length>65000){
+      toast('⚠️ 사진이 많아 링크가 길어요. 일부 브라우저에서 안 열릴 수 있습니다.');
+      setTimeout(()=>copyUrl(url),2000);
+    } else {
+      copyUrl(url);
+    }
   };
   function toast(msg){ const t=$('toast'); if(msg) t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); }
 
   function renderReceive(){
     applyColor(D.envelopeColor);
     $('receiveToText').textContent=D.to+'님에게 편지가 도착했습니다';
+
+    const page=$('pageReceive');
+    let isLight=false;
+    if(D.receiveBg==='color'&&D.receiveBgValue){
+      page.style.background=D.receiveBgValue;
+      page.style.backgroundImage='none';
+      const r=parseInt(D.receiveBgValue.slice(1,3),16),g=parseInt(D.receiveBgValue.slice(3,5),16),b=parseInt(D.receiveBgValue.slice(5,7),16);
+      isLight=(r*299+g*587+b*114)/1000>128;
+    } else if(D.receiveBg==='image'&&D.receiveBgValue){
+      page.style.background='#222';
+      page.style.backgroundImage='url('+D.receiveBgValue+')';
+      page.style.backgroundSize='cover';
+      page.style.backgroundPosition='center';
+    } else if(D.receiveBg==='white'||D.receiveBg==='cream'){
+      page.style.background='none';
+      page.style.backgroundImage=receiveBgPresets[D.receiveBg];
+      isLight=true;
+    } else if(receiveBgPresets[D.receiveBg]){
+      page.style.background='none';
+      page.style.backgroundImage=receiveBgPresets[D.receiveBg];
+    } else {
+      page.style.background='#3D0205';
+      page.style.backgroundImage=receiveBgPresets.default;
+    }
+    const textColor=isLight?'rgba(0,0,0,.55)':'rgba(255,255,255,.55)';
+    const hintColor=isLight?'rgba(0,0,0,.35)':'rgba(255,255,255,.35)';
+    $('receiveToText').style.color=textColor;
+    $('receiveHint').style.color=hintColor;
+    const replyBtn=$('btnReply');
+    if(replyBtn){ replyBtn.style.color=isLight?'rgba(0,0,0,.5)':'rgba(255,255,255,.5)'; replyBtn.style.borderColor=isLight?'rgba(0,0,0,.25)':'rgba(255,255,255,.25)'; }
+
     const scene=$('receiveScene'); scene.innerHTML=''; scene.appendChild(buildEnvelope(true));
     scene.addEventListener('click',()=>$('receiveHint').classList.add('hidden'),{once:true});
   }
