@@ -145,6 +145,17 @@ document.addEventListener('DOMContentLoaded', () => {
     validate();
   };
 
+  // Category tabs
+  $('optCatTabs').addEventListener('click',e=>{
+    const tab=e.target.closest('.opt-cat-tab'); if(!tab) return;
+    $('optCatTabs').querySelectorAll('.opt-cat-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.opt-cat-panel').forEach(p=>p.classList.remove('active'));
+    const panel=document.querySelector('.opt-cat-panel[data-cat="'+tab.dataset.cat+'"]');
+    if(panel) panel.classList.add('active');
+    $('decoOptions').scrollTop=0;
+  });
+
   // Options scroll hint
   const optsEl=$('decoOptions');
   if(optsEl) optsEl.addEventListener('scroll',function(){
