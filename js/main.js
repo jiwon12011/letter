@@ -72,10 +72,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function $(id){ return document.getElementById(id); }
 
   const pages=document.querySelectorAll('.page');
+  let transitioning=false;
   function showPage(id){
-    pages.forEach(p=>p.classList.remove('active'));
-    $(id).classList.add('active'); window.scrollTo(0,0);
-    if(id==='pageDecorate'){ renderStickerTab(curTab); refreshDecoCanvases(); }
+    const current=document.querySelector('.page.active');
+    if(current&&current.id!==id&&!transitioning){
+      transitioning=true;
+      current.classList.add('exiting');
+      setTimeout(()=>{
+        current.classList.remove('active','exiting');
+        $(id).classList.add('active'); window.scrollTo(0,0);
+        if(id==='pageDecorate'){ renderStickerTab(curTab); refreshDecoCanvases(); }
+        transitioning=false;
+      },250);
+    } else {
+      pages.forEach(p=>p.classList.remove('active'));
+      $(id).classList.add('active'); window.scrollTo(0,0);
+      if(id==='pageDecorate'){ renderStickerTab(curTab); refreshDecoCanvases(); }
+    }
   }
 
   function toUrlSafeB64(str){ return btoa(str).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''); }
@@ -114,13 +127,31 @@ document.addEventListener('DOMContentLoaded', () => {
   $('btnNewLetter').onclick=()=>{
     location.hash=''; $('recipientName').value=''; $('letterContent').value=''; $('senderName').value='';
     $('charCount').textContent='0'; $('btnToDecorate').disabled=true;
-    D.stickers=[]; D.letterStickers=[]; D.photos=[]; D.letterPhotos=[]; showPage('pageLanding');
+    Object.assign(D,{to:'',body:'',from:'',envelopeColor:'#741518',paperColor:'#FFF8E7',inkColor:'#2C1810',
+      paper:'none',seal:'tape-pink',font:'Nanum Pen Script',texture:'smooth',letterBorder:'none',
+      motion:'slideUp',align:'left',stickers:[],letterStickers:[],photos:[],letterPhotos:[],
+      receiveBg:'default',receiveBgValue:'',bgMotion:'none'});
+    applyColor('#741518');
+    showPage('pageLanding');
   };
   $('btnReply').onclick=()=>{ location.hash=''; showPage('pageWrite'); };
 
   function validate(){ $('btnToDecorate').disabled=!($('recipientName').value.trim()&&$('letterContent').value.trim()&&$('senderName').value.trim()); }
   $('recipientName').oninput=validate; $('senderName').oninput=validate;
-  $('letterContent').oninput=()=>{ $('charCount').textContent=$('letterContent').value.length; validate(); };
+  $('letterContent').oninput=()=>{
+    const len=$('letterContent').value.length, cc=$('charCount');
+    cc.textContent=len;
+    cc.parentElement.className='char-count'+(len>=480?' danger':len>=400?' warn':'');
+    validate();
+  };
+
+  // Options scroll hint
+  const optsEl=$('decoOptions');
+  if(optsEl) optsEl.addEventListener('scroll',function(){
+    const wrap=this.parentElement;
+    if(this.scrollHeight-this.scrollTop-this.clientHeight<10) wrap.classList.add('scrolled-bottom');
+    else wrap.classList.remove('scrolled-bottom');
+  });
 
   // Color pickers
   $('envColorPicker').oninput=function(){ D.envelopeColor=this.value; applyColor(this.value); syncDecoPreview(); };
@@ -555,9 +586,9 @@ document.addEventListener('DOMContentLoaded', () => {
     el.addEventListener('click',()=>{
       if(state!=='closed') return; state='animating';
       const seal=el.querySelector('.env-seal'), flap=el.querySelector('.env-flap'), letter=el.querySelector('.env-letter');
-      spawnParticles(seal); seal.classList.add('cracked');
-      setTimeout(()=>{ el.querySelector('.env-inner').classList.add('show'); flap.classList.add('open-'+(D.motion||'slideUp')); },600);
-      setTimeout(()=>letter.classList.add('rising'),1600);
+      if(seal){ spawnParticles(seal); seal.classList.add('cracked'); }
+      setTimeout(()=>{ el.querySelector('.env-inner').classList.add('show'); flap.classList.add('open-'+(D.motion||'slideUp')); },400);
+      setTimeout(()=>letter.classList.add('rising'),1100);
       setTimeout(()=>{
         state='open'; letter.classList.remove('rising'); letter.classList.add('expanded');
         const ov=document.createElement('div'); ov.className='overlay'; document.body.appendChild(ov);
@@ -568,7 +599,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const closeBtn=letter.querySelector('.letter-close-btn');
         if(closeBtn) closeBtn.onclick=e=>{ e.stopPropagation(); close(); };
         letter.onclick=e=>e.stopPropagation();
-      },2800);
+      },2000);
     });
   }
 
