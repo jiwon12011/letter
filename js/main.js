@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     paper:'none', seal:'tape-pink', font:'Nanum Pen Script',
     texture:'smooth', letterBorder:'none', motion:'slideUp', align:'left',
     stickers:[], letterStickers:[], photos:[], letterPhotos:[],
-    receiveBg:'default', receiveBgValue:''
+    receiveBg:'default', receiveBgValue:'', bgMotion:'none'
   };
 
   const receiveBgPresets = {
@@ -92,6 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         Object.assign(D,data);
         ['stickers','letterStickers','photos','letterPhotos'].forEach(k=>{ if(!D[k]) D[k]=[]; });
         if(!D.receiveBg) D.receiveBg='default';
+        if(!D.bgMotion) D.bgMotion='none';
         showPage('pageReceive'); renderReceive(); return;
       }catch(e){ console.error('링크 파싱 실패',e); }
     }
@@ -203,6 +204,7 @@ document.addEventListener('DOMContentLoaded', () => {
   pick('envTextures','texture',t=>{ D.texture=t; syncDecoPreview(); });
   pick('letterBorders','border',b=>{ D.letterBorder=b; refreshLetterPreview(); });
   pick('motionPicker','motion',m=>{ D.motion=m; });
+  pick('bgMotionPicker','bgmotion',m=>{ D.bgMotion=m; });
   pick('alignPicker','align',a=>{ D.align=a; refreshLetterPreview(); });
 
   // 모션 미리보기: 봉투 탭으로 전환 → 플랩 애니메이션 재생 → 리셋
@@ -220,9 +222,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 리셋
     flap.className='deco-env-flap';
-    flap.style.opacity=''; flap.style.transform='';
+    flap.style.cssText=''; flap.style.opacity=''; flap.style.transform='';
     seal.style.opacity='';
-    void flap.offsetWidth; // reflow
+    void flap.offsetWidth;
 
     // 장식 사라짐
     setTimeout(()=>{ seal.style.transition='opacity .3s'; seal.style.opacity='0'; },100);
@@ -236,7 +238,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 리셋
     setTimeout(()=>{
       flap.className='deco-env-flap';
-      flap.style.transition='none'; flap.style.opacity=''; flap.style.transform=''; flap.style.clipPath='';
+      flap.style.cssText=''; flap.style.transition='none'; flap.style.opacity=''; flap.style.transform=''; flap.style.clipPath=''; flap.style.filter=''; flap.style.animation='';
       seal.style.transition='none'; seal.style.opacity='';
     },2000);
   };
@@ -597,6 +599,80 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const scene=$('receiveScene'); scene.innerHTML=''; scene.appendChild(buildEnvelope(true));
     scene.addEventListener('click',()=>$('receiveHint').classList.add('hidden'),{once:true});
+
+    document.querySelectorAll('.bg-motion-layer').forEach(l=>l.remove());
+    if(D.bgMotion&&D.bgMotion!=='none') spawnBgMotion(D.bgMotion,page);
+  }
+
+  function spawnBgMotion(type,container){
+    const layer=document.createElement('div');
+    layer.className='bg-motion-layer';
+    container.appendChild(layer);
+
+    const R=(min,max)=>min+Math.random()*(max-min);
+    const RI=(min,max)=>Math.floor(R(min,max));
+    const confettiColors=['#ff6b6b','#feca57','#48dbfb','#ff9ff3','#54a0ff','#5f27cd','#01a3a4','#f368e0','#ff6348','#7bed9f'];
+    const petalColors=['rgba(255,183,197,.7)','rgba(255,150,170,.6)','rgba(255,200,210,.5)','rgba(255,220,230,.6)'];
+    const leafEmojis=['🍂','🍁','🍃','🌿'];
+
+    function make(cls,props){
+      const el=document.createElement('div');
+      el.className='bg-particle '+cls;
+      Object.entries(props||{}).forEach(([k,v])=>el.style.setProperty(k,v));
+      layer.appendChild(el);
+      return el;
+    }
+
+    if(type==='sparkle'){
+      for(let i=0;i<40;i++){
+        make('bp-sparkle',{'--dur':R(2,5)+'s','--opa':R(.4,.9)+'',left:R(0,100)+'%',top:R(0,100)+'%','animation-delay':R(0,4)+'s'});
+      }
+    } else if(type==='snow'){
+      for(let i=0;i<50;i++){
+        const sz=R(3,8);
+        make('bp-snow',{'--dur':R(4,10)+'s','--sz':sz+'px','--drift':R(-30,30)+'px',left:R(0,100)+'%',top:R(-10,0)+'%','animation-delay':R(0,8)+'s',opacity:R(.4,.8)+''});
+      }
+    } else if(type==='hearts'){
+      for(let i=0;i<25;i++){
+        const el=make('bp-heart',{'--dur':R(4,8)+'s','--sz':R(12,24)+'px','--rot':R(-45,45)+'deg',left:R(0,100)+'%',bottom:'-5%','animation-delay':R(0,6)+'s'});
+        el.textContent=['❤️','💕','💗','💖','💘'][RI(0,5)];
+      }
+    } else if(type==='petals'){
+      for(let i=0;i<35;i++){
+        make('bp-petal',{'--dur':R(5,10)+'s','--sz':R(6,14)+'px','--drift':R(-50,50)+'px','--rot':R(180,720)+'deg','--clr':petalColors[RI(0,petalColors.length)],left:R(0,100)+'%',top:R(-10,0)+'%','animation-delay':R(0,8)+'s'});
+      }
+    } else if(type==='stars'){
+      for(let i=0;i<20;i++){
+        const el=make('bp-star',{'--dur':R(1.5,3.5)+'s','--sz':R(8,16)+'px','--dx':R(-100,100)+'px','--dy':R(40,120)+'px',left:R(5,95)+'%',top:R(5,50)+'%','animation-delay':R(0,5)+'s'});
+        el.textContent='✦';
+      }
+    } else if(type==='bubbles'){
+      for(let i=0;i<30;i++){
+        make('bp-bubble',{'--dur':R(5,10)+'s','--sz':R(8,22)+'px',left:R(0,100)+'%',bottom:'-5%','animation-delay':R(0,8)+'s'});
+      }
+    } else if(type==='firefly'){
+      for(let i=0;i<25;i++){
+        make('bp-firefly',{'--dur':R(3,6)+'s','--dx':R(-40,40)+'px','--dy':R(-40,40)+'px',left:R(5,95)+'%',top:R(5,95)+'%','animation-delay':R(0,4)+'s'});
+      }
+    } else if(type==='confetti'){
+      for(let i=0;i<45;i++){
+        make('bp-confetti',{'--dur':R(3,6)+'s','--w':R(6,12)+'px','--h':R(4,8)+'px','--clr':confettiColors[RI(0,confettiColors.length)],'--rx':R(360,1080)+'deg','--rz':R(180,720)+'deg',left:R(0,100)+'%',top:R(-10,0)+'%','animation-delay':R(0,5)+'s'});
+      }
+    } else if(type==='aurora'){
+      const auroraColors=['rgba(0,255,150,.15)','rgba(0,150,255,.12)','rgba(150,0,255,.1)','rgba(0,255,255,.12)'];
+      for(let i=0;i<4;i++){
+        make('bp-aurora',{'--dur':R(6,12)+'s',left:R(-20,40)+'%',top:R(0,30)+'%',width:R(60,120)+'%',height:R(30,50)+'%',background:auroraColors[i],'animation-delay':R(0,4)+'s'});
+      }
+    } else if(type==='rain'){
+      for(let i=0;i<60;i++){
+        make('bp-rain',{'--dur':R(.6,1.5)+'s','--sz':R(12,25)+'px',left:R(0,100)+'%',top:R(-5,0)+'%','animation-delay':R(0,3)+'s'});
+      }
+    } else if(type==='leaves'){
+      for(let i=0;i<20;i++){
+        const el=make('bp-leaf',{'--dur':R(6,12)+'s','--sz':R(14,24)+'px','--drift':R(-80,80)+'px','--rot':R(360,720)+'deg',left:R(0,100)+'%',top:R(-10,0)+'%','animation-delay':R(0,8)+'s'});
+        el.textContent=leafEmojis[RI(0,leafEmojis.length)];
+      }
+    }
   }
 
   function spawnParticles(origin){
