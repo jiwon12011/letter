@@ -494,6 +494,7 @@ document.addEventListener('DOMContentLoaded', () => {
     el.innerHTML=
       '<div class="env-inner"></div>'+
       '<div class="env-letter'+borderCls+'" style="background:'+D.paperColor+';'+patCSS(D.paper)+'position:relative">'+
+        '<button class="letter-close-btn" aria-label="닫기">&times;</button>'+
         '<div class="env-letter-content" style="font-family:\''+D.font+'\',cursive;color:'+D.inkColor+';text-align:'+(D.align||'left')+'">'+
           '<p class="env-letter-greeting" style="color:'+D.inkColor+'">'+esc(D.to)+'에게</p>'+
           '<p class="env-letter-body">'+esc(D.body)+'</p>'+
@@ -523,18 +524,42 @@ document.addEventListener('DOMContentLoaded', () => {
         function close(){ letter.classList.remove('expanded'); ov.style.opacity='0'; ov.style.transition='opacity .4s';
           setTimeout(()=>{ ov.remove(); letter.classList.add('rising');
             const rb=$('btnReply'); if(rb) rb.style.display='inline-block'; },400); }
-        ov.onclick=close; letter.onclick=e=>e.stopPropagation();
+        ov.onclick=close;
+        const closeBtn=letter.querySelector('.letter-close-btn');
+        if(closeBtn) closeBtn.onclick=e=>{ e.stopPropagation(); close(); };
+        letter.onclick=e=>e.stopPropagation();
       },2800);
     });
   }
 
-  function renderSendPreview(){ const w=$('sendPreview'); w.innerHTML=''; w.appendChild(buildEnvelope(true)); }
+  function renderSendPreview(){
+    const w=$('sendPreview'); w.innerHTML=''; w.appendChild(buildEnvelope(true));
+    if(D.receiveBg==='color'&&D.receiveBgValue){
+      w.style.background=D.receiveBgValue;
+      w.style.backgroundImage='none';
+    } else if(D.receiveBg==='image'&&D.receiveBgValue){
+      w.style.background='#222';
+      w.style.backgroundImage='url('+D.receiveBgValue+')';
+      w.style.backgroundSize='cover'; w.style.backgroundPosition='center';
+    } else if(receiveBgPresets[D.receiveBg]){
+      w.style.background='none';
+      w.style.backgroundImage=receiveBgPresets[D.receiveBg];
+    } else {
+      w.style.background='rgba(0,0,0,.03)';
+      w.style.backgroundImage='none';
+    }
+  }
 
   $('btnCopyLink').onclick=async()=>{
+    const btn=$('btnCopyLink'), btnText=$('btnCopyText');
+    btn.classList.add('btn--loading');
+    btnText.textContent='링크 생성 중...';
     const compressPhotos=async(arr)=>Promise.all(
       (arr||[]).filter(Boolean).map(async p=>({...p, dataUrl:await recompressDataUrl(p.dataUrl,150,0.4)}))
     );
     const [photos,letterPhotos]=await Promise.all([compressPhotos(D.photos),compressPhotos(D.letterPhotos)]);
+    btn.classList.remove('btn--loading');
+    btnText.textContent='\u{1F517} 링크 복사하기';
     const clean=Object.assign({},D,{
       stickers:(D.stickers||[]).filter(Boolean),
       letterStickers:(D.letterStickers||[]).filter(Boolean),

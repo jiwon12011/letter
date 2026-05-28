@@ -2,7 +2,12 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#741518">
+  <meta name="description" content="소중한 사람에게 예쁜 편지를 만들어 보내세요">
+  <meta property="og:title" content="Letter - 소중한 사람에게 마음을 전하세요">
+  <meta property="og:description" content="예쁜 봉투에 담긴 편지가 도착했어요">
+  <meta property="og:type" content="website">
   <title>Letter - 소중한 사람에게 마음을 전하세요</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -15,6 +20,7 @@
 
   <!-- ===== 랜딩 ===== -->
   <section class="page page--landing" id="pageLanding">
+    <div class="landing-bg-glow"></div>
     <div class="landing">
       <div class="landing-icon">
         <svg class="landing-envelope-svg" viewBox="0 0 120 90" width="120" height="90">
@@ -26,7 +32,7 @@
       </div>
       <h1 class="landing-title">Letter</h1>
       <p class="landing-sub">소중한 사람에게 마음을 전하세요</p>
-      <button class="btn btn--primary" id="btnStart">편지 만들기</button>
+      <button class="btn btn--primary btn--glow" id="btnStart">편지 만들기</button>
     </div>
   </section>
 
@@ -359,7 +365,7 @@
       </div>
       <div class="send-preview" id="sendPreview"></div>
       <div class="send-actions">
-        <button class="btn btn--primary btn--large" id="btnCopyLink">&#128279; 링크 복사하기</button>
+        <button class="btn btn--primary btn--large" id="btnCopyLink"><span id="btnCopyText">&#128279; 링크 복사하기</span></button>
         <button class="btn btn--ghost" id="btnReplay">다시 미리보기</button>
       </div>
       <div class="step-nav">
