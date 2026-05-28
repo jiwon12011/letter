@@ -229,6 +229,23 @@ body { min-height:100vh; background:var(--bg); font-family:'Pretendard','Nanum M
 .receive-bg-preview-wrap { display:flex; align-items:center; gap:8px; margin-top:8px; }
 .receive-bg-thumb { width:60px; height:40px; border-radius:6px; background-size:cover; background-position:center; border:1px solid #ddd; }
 
+/* 받는 사람 배경 실시간 미리보기 */
+.rbg-live-preview {
+  margin-top:12px; border-radius:12px; overflow:hidden;
+  height:160px; position:relative;
+  background:#3D0205; background-image:radial-gradient(circle,#5C060A 0%,#2A0103 100%);
+  background-size:cover; background-position:center;
+  transition:background .3s, background-image .3s;
+  box-shadow:0 2px 12px rgba(0,0,0,.1), inset 0 0 0 1px rgba(0,0,0,.06);
+}
+.rbg-live-inner { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; pointer-events:none; }
+.rbg-live-to { font-family:var(--font-letter); font-size:11px; color:rgba(255,255,255,.5); letter-spacing:1px; }
+.rbg-live-env { width:80px; height:48px; position:relative; }
+.rbg-live-env-body { position:absolute; inset:0; background:var(--env-color); border-radius:3px; box-shadow:0 2px 8px rgba(0,0,0,.2); }
+.rbg-live-env-flap { position:absolute; top:0; left:0; width:0; height:0; border-left:40px solid transparent; border-right:40px solid transparent; border-top:28px solid var(--env-light); }
+.rbg-live-hint { font-size:8px; color:rgba(255,255,255,.3); letter-spacing:.5px; }
+.rbg-live-preview .bg-motion-layer { position:absolute; inset:0; z-index:0; overflow:hidden; }
+
 /* 사진 업로드 */
 .option-desc { font-size:11px; color:#aaa; margin-bottom:8px; line-height:1.4; }
 .photo-upload-btn {

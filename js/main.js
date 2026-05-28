@@ -132,6 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
     D.receiveBg='color'; D.receiveBgValue=this.value;
     $('receiveBgPresets').querySelectorAll('.rbg-btn').forEach(b=>b.classList.remove('active'));
     $('receiveBgPreviewWrap').style.display='none';
+    updateLivePreview();
   };
   $('receiveBgPresets').addEventListener('click',e=>{
     const btn=e.target.closest('.rbg-btn'); if(!btn) return;
@@ -140,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
     D.receiveBg=btn.dataset.rbg; D.receiveBgValue='';
     $('receiveBgColorPicker').value='#3D0205';
     $('receiveBgPreviewWrap').style.display='none';
+    updateLivePreview();
   });
   $('receiveBgInput').addEventListener('change',function(){
     const file=this.files[0]; if(!file||!file.type.startsWith('image/')) return;
@@ -148,6 +150,7 @@ document.addEventListener('DOMContentLoaded', () => {
       $('receiveBgPresets').querySelectorAll('.rbg-btn').forEach(b=>b.classList.remove('active'));
       $('receiveBgThumb').style.backgroundImage='url('+smallUrl+')';
       $('receiveBgPreviewWrap').style.display='flex';
+      updateLivePreview();
     });
     this.value='';
   });
@@ -155,7 +158,43 @@ document.addEventListener('DOMContentLoaded', () => {
     D.receiveBg='default'; D.receiveBgValue='';
     $('receiveBgPreviewWrap').style.display='none';
     $('receiveBgPresets').querySelector('[data-rbg="default"]').classList.add('active');
+    updateLivePreview();
   };
+
+  function updateLivePreview(){
+    const box=$('rbgLivePreview'); if(!box) return;
+    const toEl=$('rbgLiveTo');
+    const hintEl=box.querySelector('.rbg-live-hint');
+    let isLight=false;
+
+    if(D.receiveBg==='color'&&D.receiveBgValue){
+      box.style.background=D.receiveBgValue;
+      box.style.backgroundImage='none';
+      const r=parseInt(D.receiveBgValue.slice(1,3),16),g=parseInt(D.receiveBgValue.slice(3,5),16),b=parseInt(D.receiveBgValue.slice(5,7),16);
+      isLight=(r*299+g*587+b*114)/1000>128;
+    } else if(D.receiveBg==='image'&&D.receiveBgValue){
+      box.style.background='#222';
+      box.style.backgroundImage='url('+D.receiveBgValue+')';
+      box.style.backgroundSize='cover'; box.style.backgroundPosition='center';
+    } else if(D.receiveBg==='white'||D.receiveBg==='cream'){
+      box.style.background='none';
+      box.style.backgroundImage=receiveBgPresets[D.receiveBg];
+      isLight=true;
+    } else if(receiveBgPresets[D.receiveBg]){
+      box.style.background='none';
+      box.style.backgroundImage=receiveBgPresets[D.receiveBg];
+    } else {
+      box.style.background='#3D0205';
+      box.style.backgroundImage=receiveBgPresets.default;
+    }
+
+    toEl.style.color=isLight?'rgba(0,0,0,.5)':'rgba(255,255,255,.5)';
+    hintEl.style.color=isLight?'rgba(0,0,0,.3)':'rgba(255,255,255,.3)';
+    toEl.textContent=D.to?'To. '+D.to:'To. 받는 사람';
+
+    box.querySelectorAll('.bg-motion-layer').forEach(l=>l.remove());
+    if(D.bgMotion&&D.bgMotion!=='none') spawnBgMotion(D.bgMotion,box);
+  }
 
   function compressImage(file,maxW,quality,cb){
     const img=new Image();
@@ -204,7 +243,7 @@ document.addEventListener('DOMContentLoaded', () => {
   pick('envTextures','texture',t=>{ D.texture=t; syncDecoPreview(); });
   pick('letterBorders','border',b=>{ D.letterBorder=b; refreshLetterPreview(); });
   pick('motionPicker','motion',m=>{ D.motion=m; });
-  pick('bgMotionPicker','bgmotion',m=>{ D.bgMotion=m; });
+  pick('bgMotionPicker','bgmotion',m=>{ D.bgMotion=m; updateLivePreview(); });
   pick('alignPicker','align',a=>{ D.align=a; refreshLetterPreview(); });
 
   // 모션 미리보기: 봉투 탭으로 전환 → 플랩 애니메이션 재생 → 리셋
@@ -371,6 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
     restoreStickers($('decoCanvasLetter'),D.letterStickers);
     restorePhotos($('decoCanvasEnvelope'),D.photos);
     restorePhotos($('decoCanvasLetter'),D.letterPhotos);
+    updateLivePreview();
   }
 
   // Photo upload
